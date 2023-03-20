@@ -2,6 +2,7 @@ package com.co.kr.exception;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -48,7 +49,7 @@ public class AllExceptionHandler {
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public HttpEntity<ErrorResponse> handlerInternalServerError(RequestException exception) {
 		System.out.println("=========Internal Error=========" + exception.getMessage());
-		ErrorResponse errRes = ErrResponse.builder()
+		ErrorResponse errRes = ErrorResponse.builder()
 				.result(exception.getCode().getResult())
 				.resultDesc(exception.getCode().getResultDesc())
 				.resDate(CommonUtils.currentTime())

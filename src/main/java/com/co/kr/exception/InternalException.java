@@ -25,4 +25,32 @@ public class InternalException extends RuntimeException{
 		this(code);
 		this.map = map;
 	}
+	
+	public InternalException(Code code, String errorMsg) {
+		this(code);
+		this.errorMsg = errorMsg;
+	}
+	
+	public InternalException(Code code, Map<String, Object> map, String errorMsg) {
+		this(code);
+		this.map = map;
+		this.errorMsg = errorMsg;
+	}
+	
+	//생성자
+	public static InternalException fire(Code code) {
+		return new InternalException(code);
+	}
+	
+	public static InternalException fire(Code code, Map<String, Object> map) {
+		return new InternalException(code, map);
+	}
+	
+	public static InternalException fire(Code code, String errorMsg) {
+		return new InternalException(code, errorMsg);
+	}
+	
+	public static InternalException fire(Code code, Map<String, Object> map, String errorMsg) {
+		return new InternalException(code, map, errorMsg);
+	}
 }
