@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-						"http://mybatis.org/dtd/mybtis-3-mapper.dtd">
+						"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.co.kr.mapper.UserMapper">
 	<!-- selectId -->
 	<select id="mbSelectList" resultType="com.co.kr.domain.LoginDomain" parameterType="hashMap">
@@ -8,7 +8,7 @@
 	</select>
 	
 	<!-- selectAll -->
-	<select id="mbAllList" resultType="com.co.kr.domain.LoginDomain" parameyerType="map">
+	<select id="mbAllList" resultType="com.co.kr.domain.LoginDomain" parameterType="map">
 		SELECT * FROM jsp.memer order by mb_update_at desc limit #{offset}. #{contentnum}
 	</select>
 	

@@ -8,6 +8,14 @@
 		<link rel="stylesheet" type="text/css" th:href="@{css/jquery-ui-1.12.1.css}">
 		<link rel="stylesheet" th:href="@{css/jsp-test.css}" type="text/css">
 		
+		<!-- 뒤로가기 방지 -->
+		<script type="text/javascript">
+			history.pushState(null, null, location.href);
+			window.onpopstate = function() {
+				history.go(1);
+			}
+		</script>
+		
 		<title>spring boot study</title>
 	</head>
 	<body>
@@ -20,6 +28,18 @@
 		        </div>
 		        <div class="content">
 		            <div class="tit">SpringBoot STUDY</div>
+		            <div class="form">
+		            	<form id="loginForm" role="form" action="board" method="post">
+		            		<input type="text" name="id" id="id" placeholder="id" required>
+		            		<input type="text" name="pw" id="pw" placeholder="pw" required>
+		            		<button type="submit" id="submit">LOGIN</button>
+		            	</form>
+		            	<ul>
+		            		<li class="signin">
+		            			<a th:href="@{signin}">SIGNIN</a>
+		            		</li>
+		            	</ul>
+		            </div>
 		        </div>
 		    </div>
 		</div>
