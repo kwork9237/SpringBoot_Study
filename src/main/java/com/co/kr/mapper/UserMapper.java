@@ -17,6 +17,7 @@ public interface UserMapper {
 	
 	//전체 데이터
 	public List<LoginDomain> mbAllList(Map<String, Integer>map);
+	//public List<LoginDomain> mbAllList();
 	
 	//전체 갯수
 	public int mbGetAll();
