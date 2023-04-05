@@ -7,7 +7,7 @@
 </div>
 
 <div class="title" style="color:#00a2be">보드 리스트</div>
-<form role="form" action="upload" method="post" enctype="multipart/form-data">
+<form role="form" th:object=${fileListVO} th:action="@{editSave}" method="post" enctype="multipart/form-data">
     <div class="section form">
        <table>
         <colgroup>
@@ -16,29 +16,31 @@
         </colgroup>
         <tbody>
             <tr> 
-                <th>제목</th>
+	            <th>제목</th>
                 <td>
-                    <input type="hidden" name="seq" placeholder="글번호" required/>
-                    <input type="text" name="title" placeholder="제목" required/>
+                    <input type="hidden" th:field="*{seq}" />
+                    <input type="hidden" th:field="*{isEdit}"/>
+                    <input type="text" th:field="*{title}" placeholder="제목" required/>
                 </td>
             </tr>
             
             <tr> 
                <th>내용</th>
                 <td >
-                   <textarea colspan="2" id="story" name="content" placeholder="내용을 적어주세요." rows="5" cols="200" required></textarea>
+                   <textarea colspan="2" id="story" th:field="*{content}" placeholder="내용을 적어주세요." rows="5" cols="200" required></textarea>
                 </td>
             </tr>
             <tr> 
                <th><label for="file">첨부파일</label></th>
                 <td>
                     <input type="file" id="file" name="files" multiple />
+                    <span style="color: #00a2be" th:text="'*새로 파일첨부시 기존 파일은 삭제됩니다.(첨부된 파일 : '+ ${fileLen} + '개)'"></span>
                 </td>
             </tr>
         </tbody>
        </table>
        <div class="button">
-            <button type="submit" style="margin-right: 11px">글쓰기</button>
+            <button type="submit" style="margin-right: 11px">내용수정</button>
        </div>
     </div>
 

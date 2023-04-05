@@ -25,21 +25,16 @@
                 <a href="/main"> <span>SpringBoot</span> <span>STUDY</span></a>
             </div>
             <div class="content">
-                <div class="tit">SpringBoot STUDY</div>
-                <div class="form">   
-                    <form   id="loginForm" role="form" action="board" method="post">
-				        <input type="text" name ="id" id="id" placeholder="id" required> 
-				        <input type="text" name="pw" id="pw" placeholder="pw" required> 
-				        <button type="submit" id="submit">LOGIN</button>
-				    </form>
-				    <ul>
-				        <li class="signin"><a  th:href="@{signin}">SIGNIN</a></li>
-				    </ul>
-				    
+                <div class="title">SIGN IN</div>
+                <div class="form">    
+                    <form   id="loginForm" role="form" action="create" method="post">
+                        <input type="text" name ="id" id="id" placeholder="id" required> 
+                        <input type="text" name="pw" id="pw" placeholder="pw" required> 
+                        <button class="signin" type="submit" id="submit">SIGNIN</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-
 </body>
 </html>
