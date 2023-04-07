@@ -10,4 +10,7 @@ import lombok.ToString;
 public class SigninVO {
 	private String id;	
 	private String pw;
+	private String level;
+	private String ip;
+	private String use;
 }

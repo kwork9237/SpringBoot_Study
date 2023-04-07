@@ -16,7 +16,8 @@ public interface UserService {
 	public int mbGetAll();
 	
 	//신규
-	public void mbCreate(LoginDomain loginDomain);
+	//public void mbCreate(LoginDomain loginDomain);
+	public void mbCreate(Map<String, String> map);
 	
 	//getMbIdCheck
 	LoginDomain mbGetId(Map<String, String> map);

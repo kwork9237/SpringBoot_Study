@@ -20,6 +20,7 @@ import com.co.kr.service.UploadService;
 import com.co.kr.service.UserService;
 import com.co.kr.util.CommonUtils;
 import com.co.kr.vo.LoginVO;
+import com.co.kr.vo.SigninVO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,12 +49,15 @@ public class UserController {
 		int dupleCheck = userService.mbDuplicationCheck(map);
 		LoginDomain loginDomain = userService.mbGetId(map);
 		
+		System.out.println("dupleCheck => " + dupleCheck);
+		
 		if(dupleCheck == 0) {
 			String alertText = "없는 아이디이거나 패스워드가 잘못되었습니다. 가입해주세요.";
 			String redirectPath = "/main/signin";
 			
 			CommonUtils.redirect(alertText, redirectPath, response);
 			
+			mav.setViewName("signin/signin.html");
 			return mav;
 		}
 		
@@ -85,5 +89,64 @@ public class UserController {
 		mav.setViewName("board/boardList.html");
 		
 		return mav;
+	}
+	
+	//Sign in
+	@RequestMapping(value = "signin")
+	public ModelAndView signin() {
+		ModelAndView mav = new ModelAndView();
+		
+		mav.setViewName("signin/signin.html");
+		
+		return mav;
+	}
+	
+	
+	//Member Create
+	@RequestMapping(value = "create")
+	public ModelAndView mbCreate(SigninVO signinDTO, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		ModelAndView mav = new ModelAndView();
+		
+		String IP = CommonUtils.getClientIP(request);
+				
+		//중복체크
+		Map<String, String> map = new HashMap();
+		map.put("mbId", signinDTO.getId());
+		map.put("mbPw", signinDTO.getPw());
+		map.put("mbIp", IP);
+		
+		//의문 : mbLevel과 mbUse 지정이 안되서 들어가는것.
+		//해결 : UserMapper에서 수정하면 된다.
+		
+		//멤버 생성
+		userService.mbCreate(map);
+		
+		//정상적으로 생성됐나 확인.
+		int check = userService.mbDuplicationCheck(map);
+		
+		//디버그용
+		//System.out.println("[DEBUG] check value : " + check);
+		
+		//정상 생성시 리다이렉트, 메인화면 이동
+		if(check == 1) {
+			String alertText = "아이디가 성공적으로 생성되었습니다. 로그인해 주세요.";
+			String redirectPath = "/main";
+			
+			CommonUtils.redirect(alertText, redirectPath, response);
+			
+			mav.setViewName("/index.html");
+			return mav;
+		}
+		
+		//이미 ID가 존재하는 경우, 다른 ID 생성요청, 다시 페이지 보여줌
+		else {
+			String alertText = "이미 존재하는 아이디입니다. 다른 아이디를 생성해 주세요.";
+			String redirectPath = "/main/signin";
+			
+			CommonUtils.redirect(alertText, redirectPath, response);
+			
+			mav.setViewName("/signin/signin.html");
+			return mav;
+		}
 	}
 }

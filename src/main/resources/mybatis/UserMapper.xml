@@ -28,13 +28,29 @@
 		VALUES(
 			#{mbId},
 			#{mbPw},
+			DEFAULT,
+			#{mbIp},
+			DEFAULT,
+			now(),
+			now()
+		)
+	</insert>
+	<!--
+		 xml의 SQL에서 처리하는 주석은 주석처리가 되지 않는다.
+		 또한, #{}로 값을 받으면 NULL이 들어가지만, DEFAULT로 걸어버리면 정상적으로 값이
+		 들어간다.
+	 -->
+	<!--
+		VALUES(
+			#{mbId},
+			#{mbPw},
 			#{mbLevel},
 			#{mbIp},
 			#{mbUse},
 			now(),
 			now()
-		)
-	</insert>
+		) 
+	 -->
 	
 	<!-- mbGetAll -->
 	<select id="mbGetAll" resultType="int">

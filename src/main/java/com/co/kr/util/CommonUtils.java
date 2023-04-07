@@ -34,6 +34,7 @@ public class CommonUtils {
 	};
 	
 	//Auth redirect
+	//public static void redirect(String alertText, String redirectPath, HttpServletResponse response) throws IOException {
 	public static void redirect(String alertText, String redirectPath, HttpServletResponse response) throws IOException {
 		response.setContentType("text/html; charset=UTF-8");
 		PrintWriter out = response.getWriter();
@@ -42,5 +43,7 @@ public class CommonUtils {
 		//개발용 리다이렉트
 		out.println("<script>alert('" + alertText + "'); loaction.href='" + redirectPath + "'</script>");
 		out.flush();
+		
+		//mav.setViewName("main/create");
 	}
 }
