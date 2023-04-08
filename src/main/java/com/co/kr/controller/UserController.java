@@ -11,7 +11,9 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.co.kr.domain.BoardListDomain;
@@ -128,6 +130,7 @@ public class UserController {
 		//System.out.println("[DEBUG] check value : " + check);
 		
 		//정상 생성시 리다이렉트, 메인화면 이동
+		//어드민리스트에서 강제로 메인화면으로 보내버리는 경우가 있음. (개선 필요)
 		if(check == 1) {
 			String alertText = "아이디가 성공적으로 생성되었습니다. 로그인해 주세요.";
 			String redirectPath = "/main";
@@ -155,59 +158,88 @@ public class UserController {
 	public ModelAndView mbList(HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
 		
+		mav = MemberList(request);
+		mav.setViewName("admin/adminList.html");
+		
+		return mav;
+	}
+	
+	//Alter User
+	//@RequestMapping(value = "modify")
+	@GetMapping("modify")
+	public ModelAndView modify(LoginDomain LoginDTO, @RequestParam("mbSeq") String mbSeq, HttpServletRequest request) {
+		System.out.println("TEST DEBUG" + mbSeq);
+		ModelAndView mav = new ModelAndView();
+		
+		//Map<String, String> map = new HashMap();
+		HashMap<String, String> hmap = new HashMap<String, String>();
+		hmap.put("mbSeq", mbSeq);
+		
+		//mbSeq
+		LoginDomain member = userService.mbSelectList(hmap);
+		System.out.println("");
+		
+		
+		//mav = MemberList(request);
+		mav.addObject("item", member);
+		//mav.setViewName("admin/modify/adminEditList.html/" + mbSeq);
+		mav.setViewName("admin/adminEditList.html");
+		
+		return mav;
+	}
+	
+	//Remove User
+	@RequestMapping(value = "remove")
+	public ModelAndView remove(HttpServletRequest request) {
+		ModelAndView mav = new ModelAndView();
+		
+		mav = MemberList(request);
+		mav.setViewName("/remove");
+		return mav;
+	}
+	
+	//
+	public ModelAndView MemberList(HttpServletRequest request) {
+		ModelAndView mav = new ModelAndView();
+		Map<String, Integer> map = new HashMap();
+		Map<String, Object> pegmap;
+		
+		//현재 페이지 확인
 		Integer PageNum = Integer.parseInt(request.getParameter("page"));
-		Integer Offset = 0;
+		Integer Offset = 0; //DB 조회 구간
+		Integer Content = 10; //조회할 개수 지정
+		
+		//멤버 카운트 확인, 비어있는지 확인
+		Integer MemberCount = userService.mbGetAll();
 		Boolean isNotEmpty;
 		
-		if(PageNum > 1)
-			Offset = PageNum * 10 - 10;
-		
-		Map<String, Integer> map = new HashMap();
-		map.put("offset", Offset);	//start location
-		map.put("contentnum", 10);	//view data n
-		List<LoginDomain> mbList = userService.mbAllList(map);
-		
 		//멤버 목록의 크기를 구하고, 0 이상이면 비어있지 않음 반환
-		if(mbList.size() > 0) {
+		if(MemberCount > 0) {
 			isNotEmpty = true;
 			mav.addObject("itemsIsEmpty", isNotEmpty);
 		}
 		
 		else {
-			isNotEmpty = true;
+			isNotEmpty = false;
 			mav.addObject("itemsIsEmpty", isNotEmpty);
 		}
 		
-		//아이템 추가
+		//멤버 조회
+		//DB에서 조회하는 용량 설정
+		if(PageNum != 0)
+			Offset = PageNum * 10 - 10;
+		
+		map.put("offset", Offset);		//start location
+		map.put("contentnum", Content);	//10개씩 데이터 조회
+		
+		//페이지 데이터 input
+		pegmap = Pagination.pagination(MemberCount, request);
+		mav.addAllObjects(pegmap);
+		
+		//멤버 조회
+		List<LoginDomain> mbList = userService.mbAllList(map);
 		mav.addObject("items", mbList);
-		mav.setViewName("admin/adminList.html");
 		
 		return mav;
 	}
 }
-
-
-/*
-
-		//Get User Data
-		mav.addObject("items", mbList);
-		
-		System.out.println("items ==> " + mbList);
-		
-		//------------------------------------------------
-		
-		mav.addObject(mbList);
-		mav.addObject(Pagination.pagination(0, request));
-
-		//#{offset}, #{contentnum} 
-		
-		//userService.mbGetAll();
-	
-		
-		int count = userService.mbGetAll();
-		Map<String, Object> s = Pagination.pagination(count, request);
-		
-		mav.addObject(s);
-		
-
-*/

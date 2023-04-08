@@ -21,7 +21,8 @@ public class UserServiceImpl implements UserService{
 	}
 	
 	@Override
-	public LoginDomain mbSelectList(Map<String, String>map) {
+	//public LoginDomain mbSelectList(Map<String, String>map) {
+	public LoginDomain mbSelectList(Map<String, Integer>map) {
 		return userMapper.mbSelectList(map);
 	}
 	

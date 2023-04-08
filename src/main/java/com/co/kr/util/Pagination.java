@@ -14,7 +14,7 @@ public class Pagination {
 		
 		//페이지넘버 초기화
 		String pnum = request.getParameter("page");
-		System.out.println("pnum" + pnum);
+		System.out.println("pnum : " + pnum);
 		
 		if(pnum == null) pnum = "1";
 		
