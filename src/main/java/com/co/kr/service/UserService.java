@@ -10,7 +10,7 @@ public interface UserService {
 	public LoginDomain mbSelectList(Map<String, String>map);
 	
 	//selectAll
-	public List<LoginDomain> mbAllList(Map<String, Integer>map);
+	public List<LoginDomain> mbAllList(Map<String, Integer> map);
 	
 	//selectAll Count
 	public int mbGetAll();

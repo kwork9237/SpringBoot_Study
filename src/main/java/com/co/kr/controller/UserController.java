@@ -19,6 +19,7 @@ import com.co.kr.domain.LoginDomain;
 import com.co.kr.service.UploadService;
 import com.co.kr.service.UserService;
 import com.co.kr.util.CommonUtils;
+import com.co.kr.util.Pagination;
 import com.co.kr.vo.LoginVO;
 import com.co.kr.vo.SigninVO;
 
@@ -101,7 +102,6 @@ public class UserController {
 		return mav;
 	}
 	
-	
 	//Member Create
 	@RequestMapping(value = "create")
 	public ModelAndView mbCreate(SigninVO signinDTO, HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -149,4 +149,65 @@ public class UserController {
 			return mav;
 		}
 	}
+	
+	//AdminList
+	@RequestMapping(value = "mbList")
+	public ModelAndView mbList(HttpServletRequest request) {
+		ModelAndView mav = new ModelAndView();
+		
+		Integer PageNum = Integer.parseInt(request.getParameter("page"));
+		Integer Offset = 0;
+		Boolean isNotEmpty;
+		
+		if(PageNum > 1)
+			Offset = PageNum * 10 - 10;
+		
+		Map<String, Integer> map = new HashMap();
+		map.put("offset", Offset);	//start location
+		map.put("contentnum", 10);	//view data n
+		List<LoginDomain> mbList = userService.mbAllList(map);
+		
+		//멤버 목록의 크기를 구하고, 0 이상이면 비어있지 않음 반환
+		if(mbList.size() > 0) {
+			isNotEmpty = true;
+			mav.addObject("itemsIsEmpty", isNotEmpty);
+		}
+		
+		else {
+			isNotEmpty = true;
+			mav.addObject("itemsIsEmpty", isNotEmpty);
+		}
+		
+		//아이템 추가
+		mav.addObject("items", mbList);
+		mav.setViewName("admin/adminList.html");
+		
+		return mav;
+	}
 }
+
+
+/*
+
+		//Get User Data
+		mav.addObject("items", mbList);
+		
+		System.out.println("items ==> " + mbList);
+		
+		//------------------------------------------------
+		
+		mav.addObject(mbList);
+		mav.addObject(Pagination.pagination(0, request));
+
+		//#{offset}, #{contentnum} 
+		
+		//userService.mbGetAll();
+	
+		
+		int count = userService.mbGetAll();
+		Map<String, Object> s = Pagination.pagination(count, request);
+		
+		mav.addObject(s);
+		
+
+*/
