@@ -16,7 +16,8 @@ public class Pagination {
 		String pnum = request.getParameter("page");
 		System.out.println("pnum : " + pnum);
 		
-		if(pnum == null) pnum = "1";
+		if(pnum == null)
+			pnum = "1";
 		
 		//String to int
 		int rowNUM = Integer.parseInt(pnum);

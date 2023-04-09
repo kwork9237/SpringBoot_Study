@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -164,81 +165,124 @@ public class UserController {
 		return mav;
 	}
 	
-	//Alter User
-	//@RequestMapping(value = "modify")
-	@GetMapping("modify")
-	public ModelAndView modify(LoginDomain LoginDTO, @RequestParam("mbSeq") String mbSeq, HttpServletRequest request) {
-		System.out.println("TEST DEBUG" + mbSeq);
+	//Get Modify Page
+	@GetMapping("modify/{mbSeq}")
+	public ModelAndView modify(@PathVariable String mbSeq, HttpServletRequest request) {
+		//참고
+		//GetMapping 값 read -> https://galid1.tistory.com/556
+		//PathVariable와 {} 이름은 같아야 한다.
 		ModelAndView mav = new ModelAndView();
-		
-		//Map<String, String> map = new HashMap();
-		HashMap<String, String> hmap = new HashMap<String, String>();
-		hmap.put("mbSeq", mbSeq);
-		
-		//mbSeq
-		LoginDomain member = userService.mbSelectList(hmap);
-		System.out.println("");
-		
-		
-		//mav = MemberList(request);
-		mav.addObject("item", member);
-		//mav.setViewName("admin/modify/adminEditList.html/" + mbSeq);
-		mav.setViewName("admin/adminEditList.html");
+
+		mav = toList(mbSeq, request);
 		
 		return mav;
 	}
 	
-	//Remove User
-	@RequestMapping(value = "remove")
-	public ModelAndView remove(HttpServletRequest request) {
+	//Member Update
+	@RequestMapping(value = {"/modify/update"})
+	public ModelAndView update(@RequestParam("pw") String password, @RequestParam("seq") String mbSeq,
+			HttpServletRequest request, HttpServletResponse response) throws IOException {
+		
 		ModelAndView mav = new ModelAndView();
 		
-		mav = MemberList(request);
-		mav.setViewName("/remove");
+		//조회할 mbseq 입력, 선택 및 업데이트
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("mbSeq", mbSeq);
+		
+		LoginDomain Member = userService.mbSelectList(map);
+		Member.setMbPw(password);
+		
+		userService.mbUpdate(Member);
+		
+		//Update 성공 메시지
+		String alertText = Member.getMbId() + "의 비밀번호가 갱신되었습니다.";
+		String redirectPath = "/main";
+		
+		CommonUtils.redirect(alertText, redirectPath, response);
+		
+		mav = toList(mbSeq, request);
 		return mav;
 	}
 	
-	//
+	//Member Remove
+	@RequestMapping(value = {"/remove/{mbSeq}"})
+	public ModelAndView remove(@PathVariable String mbSeq,
+			HttpServletRequest request, HttpServletResponse response) throws IOException {
+		
+		ModelAndView mav = new ModelAndView();
+		
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("mbSeq", mbSeq);
+		
+		LoginDomain Member = userService.mbSelectList(map);
+		userService.mbRemove(map);
+		
+		//Remove 성공 메시지
+		String alertText = Member.getMbId() + "가 정상적으로 삭제되었습니다.";
+		String redirectPath = "/main";
+				
+		CommonUtils.redirect(alertText, redirectPath, response);
+		
+		mav = toList(mbSeq, request);
+		return mav;
+	}
+	
+	//멤버 리스트 (admin/list.html)에 데이터 input하기 위함
 	public ModelAndView MemberList(HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
-		Map<String, Integer> map = new HashMap();
-		Map<String, Object> pegmap;
-		
-		//현재 페이지 확인
-		Integer PageNum = Integer.parseInt(request.getParameter("page"));
-		Integer Offset = 0; //DB 조회 구간
-		Integer Content = 10; //조회할 개수 지정
 		
 		//멤버 카운트 확인, 비어있는지 확인
 		Integer MemberCount = userService.mbGetAll();
 		Boolean isNotEmpty;
-		
+				
 		//멤버 목록의 크기를 구하고, 0 이상이면 비어있지 않음 반환
 		if(MemberCount > 0) {
 			isNotEmpty = true;
 			mav.addObject("itemsIsEmpty", isNotEmpty);
 		}
-		
+				
 		else {
 			isNotEmpty = false;
 			mav.addObject("itemsIsEmpty", isNotEmpty);
 		}
 		
-		//멤버 조회
-		//DB에서 조회하는 용량 설정
-		if(PageNum != 0)
-			Offset = PageNum * 10 - 10;
-		
-		map.put("offset", Offset);		//start location
-		map.put("contentnum", Content);	//10개씩 데이터 조회
-		
-		//페이지 데이터 input
+		//페이지네이션 지정
+		Map<String, Object> pegmap;
 		pegmap = Pagination.pagination(MemberCount, request);
 		mav.addAllObjects(pegmap);
 		
-		//멤버 조회
+		//Member Data Get
+		Map<String, Integer> map = new HashMap();
+		Integer Content = 10;	//조회 개수 지정
+		
+		//페이지네이션 조회시작지점을 강제로 형변환 해서 가져옴
+		map.put("offset", (int)pegmap.get("offset"));
+		map.put("contentnum", Content);
+		
 		List<LoginDomain> mbList = userService.mbAllList(map);
 		mav.addObject("items", mbList);
+		
+		return mav;
+	}
+	
+	//멤버 리스트 조회
+	public ModelAndView toList(String mbSeq, HttpServletRequest request) {
+		ModelAndView mav = new ModelAndView();
+		HashMap<String, String> hmap = new HashMap<String, String>();
+		hmap.put("mbSeq", mbSeq);
+	
+		LoginDomain member = userService.mbSelectList(hmap);
+		
+		mav = MemberList(request);
+		mav.addObject("item", member);
+
+		//수정, 선택시
+		if(member != null)
+			mav.setViewName("admin/adminEditList.html");
+		
+		//삭제시
+		else
+			mav.setViewName("admin/adminList.html");
 		
 		return mav;
 	}

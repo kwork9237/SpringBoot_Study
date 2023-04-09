@@ -43,7 +43,5 @@ public class CommonUtils {
 		//개발용 리다이렉트
 		out.println("<script>alert('" + alertText + "'); loaction.href='" + redirectPath + "'</script>");
 		out.flush();
-		
-		//mav.setViewName("main/create");
 	}
 }

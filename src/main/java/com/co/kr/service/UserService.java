@@ -7,8 +7,7 @@ import com.co.kr.domain.LoginDomain;
 
 public interface UserService {
 	//selectId
-	//public LoginDomain mbSelectList(Map<String, String>map);
-	public LoginDomain mbSelectList(Map<String, Integer>map);
+	public LoginDomain mbSelectList(Map<String, String>map);
 	
 	//selectAll
 	public List<LoginDomain> mbAllList(Map<String, Integer> map);

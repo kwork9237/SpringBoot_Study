@@ -82,6 +82,6 @@
 	
 	<!-- delete -->
 	<delete id="mbRemove" parameterType="hashMap">
-		DELETE FROM jsp.member WHERE mb_seq=#{meSeq}
+		DELETE FROM jsp.member WHERE mb_seq=#{mbSeq}
 	</delete>
 </mapper>
