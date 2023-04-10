@@ -41,9 +41,17 @@
 <!--                     </form> -->
 <!--                        <a th:href="@{/remove(id=${item.mbId})}"><button>삭제</button></a> -->
 <!--                        <a th:href="@{/remove(id = ${item.mbId})}"><button>삭제</button></a> -->
+<!--
+					<th:block th:if="${item.mbId == session.id}">
                        <a th:href="@{/modify/{mbSeq}(mbSeq = ${item.mbSeq})}"><button>수정</button></a>
                        <a th:href="@{/remove/{mbSeq}(mbSeq = ${item.mbSeq})}"><button>삭제</button></a>
-<!--                    '/delete/' + ${resultList.id} -->
+                    '/delete/' + ${resultList.id} 
+					</th:block>
+-->
+					<th:block th:if="${item.mbId == session.id}">
+						<a th:href="@{/modify/{mbSeq}(mbSeq = ${item.mbSeq})}"><button>수정</button></a>
+						<a th:href="@{/remove/{mbSeq}(mbSeq = ${item.mbSeq})}"><button>삭제</button></a>
+					</th:block>
                 </td>
             </tr>
             <tr th:unless=${itemsIsEmpty}>
