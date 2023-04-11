@@ -2,6 +2,10 @@ package com.co.kr.util;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -31,7 +35,35 @@ public class CommonUtils {
 		if(ip.equals("0:0:0:0:0:0:0:1")) ip = ip.replace("0:0:0:0:0:0:0:1", "127.0.0.1");
 		
 		return ip;
-	};
+	}
+	
+	//로컬 맥 주소 번환
+	public static String getLocalMacAddr() {
+		try {
+			InetAddress IP = InetAddress.getLocalHost();
+			NetworkInterface NI = NetworkInterface.getByInetAddress(IP);
+			byte[] macAddr = NI.getHardwareAddress();
+			String[] temp = new String[macAddr.length];
+			
+			for (int i = 0; i < macAddr.length; i++)
+				temp[i] = String.format("%02X", macAddr[i]);
+
+			String sMacAddr = String.join(":", temp);
+				
+			//System.out.println("sMacAddr Value : " + temp);
+				
+			return sMacAddr;
+		}
+		catch (UnknownHostException e) {
+			System.out.println("UnknownHost Exception : " + e);
+		}
+		catch (SocketException e) {
+			System.out.println("Socket Exception : " + e);
+		}
+			
+		//오류일 경우 null 반환
+		return null;
+	}
 	
 	//Auth redirect
 	//public static void redirect(String alertText, String redirectPath, HttpServletResponse response) throws IOException {

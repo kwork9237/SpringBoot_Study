@@ -4,6 +4,9 @@
     <button type="button">
         <a th:href="@{logout}" style="color: #fff">로그아웃</a>
     </button>
+    <br>
+	<span> MAC Addr ( </span>
+	<span th:text=${session.macAddr}></span><span> )</span>
 </div>
 
 <div class="title" style="color:#00a2be">보드 리스트</div>

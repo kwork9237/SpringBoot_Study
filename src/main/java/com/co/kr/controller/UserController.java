@@ -1,6 +1,10 @@
 package com.co.kr.controller;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,8 +56,6 @@ public class UserController {
 		
 		//중복체크
 		int dupleCheck = userService.mbDuplicationCheck(map);
-		LoginDomain loginDomain = userService.mbGetId(map);
-		
 		System.out.println("dupleCheck => " + dupleCheck);
 		
 		if(dupleCheck == 0) {
@@ -66,6 +68,18 @@ public class UserController {
 			return mav;
 		}
 		
+		if(dupleCheck >= 2) {
+			String alertText = "중복된 ID가 2개 이상입니다. DB 확인을 해 주세요.";
+			String redirectPath = "/main";
+			
+			CommonUtils.redirect(alertText, redirectPath, response);
+			
+			mav.setViewName("/index.html");
+			return mav;
+		}
+		
+		LoginDomain loginDomain = userService.mbGetId(map);		
+		
 		//현재 아이피 추출
 		String IP = CommonUtils.getClientIP(request);
 		
@@ -73,6 +87,10 @@ public class UserController {
 		session.setAttribute("ip", IP);
 		session.setAttribute("id", loginDomain.getMbId());
 		session.setAttribute("mbLevel", loginDomain.getMbLevel());
+		session.setAttribute("macAddr", CommonUtils.getLocalMacAddr()); //mac 주소 추가
+		
+		//seq data
+		session.setAttribute("mbSeq", loginDomain.getMbSeq());
 		
 		List<BoardListDomain> items = uploadService.boardList();
 		//System.out.println("items ==> " + items);
@@ -111,9 +129,12 @@ public class UserController {
 	public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		ModelAndView mav = new ModelAndView();
 		
+		//세션 전부 제거
 		HttpSession session = request.getSession();
 		session.removeAttribute("ip");
 		session.removeAttribute("id");
+		session.removeAttribute("mbSeq");
+		session.removeAttribute("mbLevel");
 		
 		//쿠키 제거
 		Cookie[] cookies = request.getCookies();
@@ -147,18 +168,18 @@ public class UserController {
 		//의문 : mbLevel과 mbUse 지정이 안되서 들어가는것.
 		//해결 : UserMapper에서 수정하면 된다.
 		
-		//멤버 생성
-		userService.mbCreate(map);
-		
-		//정상적으로 생성됐나 확인.
+		//멤버 확인
 		int check = userService.mbDuplicationCheck(map);
-		
+	
 		//디버그용
 		//System.out.println("[DEBUG] check value : " + check);
 		
 		//정상 생성시 리다이렉트, 메인화면 이동
 		//어드민리스트에서 강제로 메인화면으로 보내버리는 경우가 있음. (개선 필요)
-		if(check == 1) {
+		if(check == 0) {
+			//멤버 생성
+			userService.mbCreate(map);
+			
 			String alertText = "아이디가 성공적으로 생성되었습니다. 로그인해 주세요.";
 			String redirectPath = "/main";
 			
@@ -193,11 +214,25 @@ public class UserController {
 	
 	//Get Modify Page
 	@GetMapping("modify/{mbSeq}")
-	public ModelAndView modify(@PathVariable String mbSeq, HttpServletRequest request) {
+	public ModelAndView modify(@PathVariable String mbSeq, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		//참고
 		//GetMapping 값 read -> https://galid1.tistory.com/556
 		//PathVariable와 {} 이름은 같아야 한다.
 		ModelAndView mav = new ModelAndView();
+		
+		HttpSession session = request.getSession();
+		Integer SessSeq = (Integer) session.getAttribute("mbSeq");
+		
+		//String로 할 경우 안 되서 Integer로 캐스팅
+		if(Integer.parseInt(mbSeq) != SessSeq) {
+			String alertText = "타인의 계정은 수정할 수 없습니다!";
+			String redirectPath = "/main";
+			
+			//System.out.println("mbSeq : " + mbSeq );
+			//System.out.println("SessionData : " + session.getAttribute("mbSeq").toString());
+			
+			CommonUtils.redirect(alertText, redirectPath, response);
+		}
 
 		mav = toListRedirect(mbSeq, request);
 		
@@ -220,7 +255,6 @@ public class UserController {
 		if(Integer.parseInt(mbSeq) == 0) {
 			String alertText = "마스터 계정은 변경할 수 없습니다.";
 			String redirectPath = "/main";
-			mbSeq = "0";
 			
 			CommonUtils.redirect(alertText, redirectPath, response);
 			
@@ -233,7 +267,6 @@ public class UserController {
 		if( member == null ) {
 			String alertText = "사용자를 찾을 수 없습니다.";
 			String redirectPath = "/main/mbList";
-			mbSeq = "0";
 			
 			CommonUtils.redirect(alertText, redirectPath, response);
 			
@@ -241,7 +274,7 @@ public class UserController {
 			mav = toListRedirect(mbSeq, request);
 			return mav;
 		}
-			
+		
 		member.setMbPw(password);
 		
 		userService.mbUpdate(member);
@@ -271,7 +304,6 @@ public class UserController {
 		if(Integer.parseInt(mbSeq) == 0) {
 			String alertText = "마스터 계정은 삭제할 수 없습니다.";
 			String redirectPath = "/main";
-			mbSeq = "0";
 			
 			CommonUtils.redirect(alertText, redirectPath, response);
 			
@@ -280,11 +312,24 @@ public class UserController {
 			return mav;
 		}
 		
+		HttpSession session = request.getSession();
+		Integer SessSeq = (Integer) session.getAttribute("mbSeq");
+		
+		//String로 할 경우 안 되서 Integer로 캐스팅 (삭제방지)
+		if(Integer.parseInt(mbSeq) != SessSeq) {
+			String alertText = "타인의 계정은 삭제할 수 없습니다!";
+			String redirectPath = "/main";
+			
+			CommonUtils.redirect(alertText, redirectPath, response);
+			
+			mav = toListRedirect(mbSeq, request);
+			return mav;
+		}
+		
 		//멤버가 null일 경우 예외처리
 		if( member == null ) {
 			String alertText = "사용자를 찾을 수 없습니다.";
 			String redirectPath = "/main/";
-			mbSeq = "0";
 			
 			CommonUtils.redirect(alertText, redirectPath, response);
 			
@@ -348,10 +393,8 @@ public class UserController {
 		ModelAndView mav = new ModelAndView();
 		HashMap<String, String> hmap = new HashMap<String, String>();
 		hmap.put("mbSeq", mbSeq);
-	
+
 		LoginDomain member = userService.mbSelectList(hmap);
-		
-		if(member == null)
 		
 		mav = mbListCall(request);
 		mav.addObject("item", member);
@@ -362,6 +405,10 @@ public class UserController {
 		
 		//삭제시
 		else {
+			hmap.remove("mbSeq");
+			hmap.put("mbSeq", "0");
+			
+			member = userService.mbSelectList(hmap);
 			mav.setViewName("admin/adminList.html");
 		}
 		
