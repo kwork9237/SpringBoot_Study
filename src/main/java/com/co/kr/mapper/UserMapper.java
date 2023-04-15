@@ -13,8 +13,8 @@ public interface UserMapper {
 	public LoginDomain mbSelectList(Map<String, String> map);
 	
 	//신규 저장
-	//public void mbCreate(LoginDomain loginDomain);
-	public void mbCreate(Map<String, String>map);
+	public void mbCreate(LoginDomain loginDomain);
+	//public void mbCreate(Map<String, String>map);
 	
 	//전체 데이터
 	public List<LoginDomain> mbAllList(Map<String, Integer>map);
