@@ -54,12 +54,18 @@
 <!--					</th:block> -->
                 </td>
             </tr>
-            <tr th:unless=${itemsIsEmpty}>
+            <tr th:unless=${isNotEmpty}>
                 <td colspan="8" style="padding: 60px 0"> 데이터가 없습니다 </td>
             </tr>
         </tbody>
-    </table>
+    </table>    
+    <!-- 페이지네이션 -->
     <div class="pagination">
+    <!-- 
+    	<a th:if="(${startpage} == ${endpage}) == true">
+    		단일 페이지
+    	</a>
+     -->
         <ul>
             <th:block th:switch="${startpage} <= ${endpage}">
                 <li th:case="${rowNUM} < 0" style="display: none;">

@@ -1,10 +1,6 @@
 package com.co.kr.controller;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,6 +92,7 @@ public class UserController {
 		//System.out.println("items ==> " + items);
 		
 		mav.addObject("items", items);
+		//mav.addObject("items", bdListCall(request));
 		mav.setViewName("board/boardList.html");
 		
 		return mav;
@@ -103,12 +100,14 @@ public class UserController {
 	
 	//좌측 메뉴 클릭시 보드화면 이동 (로그인된 상태)
 	@RequestMapping(value = "bdList")
-	public ModelAndView bdList() {
+	//public ModelAndView bdList() {
+	public ModelAndView bdList(HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
 		List<BoardListDomain> items = uploadService.boardList();
 		//System.out.println("items ==> " + items);
 		
-		mav.addObject("items", items);
+		mav.addObject("items", items); //mav.addObject("items", bdListCall(request));
+		
 		mav.setViewName("board/boardList.html");
 		
 		return mav;
@@ -234,7 +233,7 @@ public class UserController {
 			CommonUtils.redirect(alertText, redirectPath, response);
 		}
 
-		mav = toListRedirect(mbSeq, request);
+		mav = toAdminListRedirect(mbSeq, request);
 		
 		return mav;
 	}
@@ -259,7 +258,7 @@ public class UserController {
 			CommonUtils.redirect(alertText, redirectPath, response);
 			
 			//마스터 계정 코드로 리다이렉트
-			mav = toListRedirect(mbSeq, request);
+			mav = toAdminListRedirect(mbSeq, request);
 			return mav;
 		}
 		
@@ -271,7 +270,7 @@ public class UserController {
 			CommonUtils.redirect(alertText, redirectPath, response);
 			
 			//마스터 계정 코드로 리다이렉트
-			mav = toListRedirect(mbSeq, request);
+			mav = toAdminListRedirect(mbSeq, request);
 			return mav;
 		}
 		
@@ -285,7 +284,7 @@ public class UserController {
 		
 		CommonUtils.redirect(alertText, redirectPath, response);
 		
-		mav = toListRedirect(mbSeq, request);
+		mav = toAdminListRedirect(mbSeq, request);
 		return mav;
 	}
 	
@@ -308,7 +307,7 @@ public class UserController {
 			CommonUtils.redirect(alertText, redirectPath, response);
 			
 			//마스터 계정 코드로 리다이렉트
-			mav = toListRedirect(mbSeq, request);
+			mav = toAdminListRedirect(mbSeq, request);
 			return mav;
 		}
 		
@@ -322,7 +321,7 @@ public class UserController {
 			
 			CommonUtils.redirect(alertText, redirectPath, response);
 			
-			mav = toListRedirect(mbSeq, request);
+			mav = toAdminListRedirect(mbSeq, request);
 			return mav;
 		}
 		
@@ -334,7 +333,7 @@ public class UserController {
 			CommonUtils.redirect(alertText, redirectPath, response);
 			
 			//마스터 계정 코드로 리다이렉트
-			mav = toListRedirect(mbSeq, request);
+			mav = toAdminListRedirect(mbSeq, request);
 			return mav;
 		}
 		
@@ -346,7 +345,7 @@ public class UserController {
 				
 		CommonUtils.redirect(alertText, redirectPath, response);
 		
-		mav = toListRedirect(mbSeq, request);
+		mav = toAdminListRedirect(mbSeq, request);
 		return mav;
 	}
 	
@@ -355,32 +354,32 @@ public class UserController {
 		ModelAndView mav = new ModelAndView();
 		
 		//멤버 카운트 확인, 비어있는지 확인
-		Integer MemberCount = userService.mbGetAll();
+		Integer memberCount = userService.mbGetAll();
 		Boolean isNotEmpty;
 				
 		//멤버 목록의 크기를 구하고, 0 이상이면 비어있지 않음 반환
-		if(MemberCount > 0) {
+		if(memberCount > 0) {
 			isNotEmpty = true;
-			mav.addObject("itemsIsEmpty", isNotEmpty);
+			mav.addObject("isNotEmpty", isNotEmpty);
 		}
 				
 		else {
 			isNotEmpty = false;
-			mav.addObject("itemsIsEmpty", isNotEmpty);
+			mav.addObject("isNotEmpty", isNotEmpty);
 		}
 		
 		//페이지네이션 지정
 		Map<String, Object> pegmap;
-		pegmap = Pagination.pagination(MemberCount, request);
+		pegmap = Pagination.pagination(memberCount, request);
 		mav.addAllObjects(pegmap);
 		
 		//Member Data Get
 		Map<String, Integer> map = new HashMap<>();
-		Integer Content = 10;	//조회 개수 지정
+		Integer content = 10;	//조회 개수 지정
 		
 		//페이지네이션 조회시작지점을 강제로 형변환 해서 가져옴
 		map.put("offset", (int)pegmap.get("offset"));
-		map.put("contentnum", Content);
+		map.put("contentnum", content);
 		
 		List<LoginDomain> mbList = userService.mbAllList(map);
 		mav.addObject("items", mbList);
@@ -388,8 +387,47 @@ public class UserController {
 		return mav;
 	}
 	
+	public ModelAndView bdListCall(HttpServletRequest request) {
+		ModelAndView mav = new ModelAndView();
+		
+		//게시글 개수 총합
+		Integer boardCount = uploadService.boardCount();
+		Boolean isNotEmpty;
+		
+		//멤버 목록의 크기를 구하고, 0 이상이면 비어있지 않음 반환
+		if(boardCount > 0) {
+			isNotEmpty = true;
+			mav.addObject("isNotEmpty", isNotEmpty);
+		}
+				
+		else {
+			isNotEmpty = false;
+			mav.addObject("isNotEmpty", isNotEmpty);
+		}
+		
+		//페이지네이션 지정
+		Map<String, Object> pegmap;
+		pegmap = Pagination.pagination(boardCount, request);
+		mav.addAllObjects(pegmap);
+		
+		//Member Data Get
+		Map<String, Integer> map = new HashMap<>();
+		Integer content = 10;	//조회 개수 지정
+			
+		//페이지네이션 조회시작지점을 강제로 형변환 해서 가져옴
+		map.put("offset", (int)pegmap.get("offset"));
+		map.put("contentnum", content);
+		
+		List<BoardListDomain> bdList = uploadService.boardAllList(map);
+		mav.addObject("items", bdList);
+		
+		System.out.println(mav);
+		
+		return mav;
+	}
+	
 	//멤버 리스트 조회
-	public ModelAndView toListRedirect(String mbSeq, HttpServletRequest request) {
+	public ModelAndView toAdminListRedirect(String mbSeq, HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
 		HashMap<String, String> hmap = new HashMap<String, String>();
 		hmap.put("mbSeq", mbSeq);

@@ -9,6 +9,16 @@
 		FROM jsp.board order by bd_update_at desc
 	</select>
 	
+	<!-- select list (ADDED) -->
+	<select id="boardAllList" resultType="com.co.kr.domain.BoardListDomain">
+		SELECT * FROM jsp.board order by bd_seq desc
+		LIMIT #{offset}, #{contentnum}
+	</select>
+	
+	<select id="boardCount" resultType="int">
+		SELECT COUNT(*) FROM jsp.board
+	</select>
+	
 	<insert id="contentUpload" parameterType="com.co.kr.domain.BoardContentDomain"
 		useGeneratedKeys="true"
 		keyProperty="bdSeq"

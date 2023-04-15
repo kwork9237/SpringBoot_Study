@@ -2,6 +2,7 @@ package com.co.kr.service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,6 +15,8 @@ import com.co.kr.vo.FileListVO;
 public interface UploadService {
 	public List<BoardListDomain> boardList();
 	
+	public List<BoardListDomain> boardAllList(Map<String, Integer> map);
+	
 	public int fileProcess(FileListVO fileListVO, MultipartHttpServletRequest request, HttpServletRequest httpReq);
 	
 	public void bdContentRemove(HashMap<String, Object> map);
@@ -22,5 +25,7 @@ public interface UploadService {
 	
 	public BoardListDomain boardSelectOne(HashMap<String, Object> map);
 	
+	//Added
 	public List<BoardFileDomain> boardSelectOneFile(HashMap<String, Object> map);
+	public Integer boardCount();
 }

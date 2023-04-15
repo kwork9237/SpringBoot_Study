@@ -29,9 +29,6 @@ import com.co.kr.exception.RequestException;
 import com.co.kr.service.UploadService;
 import com.co.kr.vo.FileListVO;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Controller
 public class FileListController {
 	@Autowired
@@ -90,7 +87,7 @@ public class FileListController {
 		ModelAndView mav = new ModelAndView();
 		
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		HttpSession session = request.getSession();
+		//HttpSession session = request.getSession();
 		
 		map.put("bdSeq", Integer.parseInt(bdSeq));
 		BoardListDomain boardListDomain = uploadService.boardSelectOne(map);

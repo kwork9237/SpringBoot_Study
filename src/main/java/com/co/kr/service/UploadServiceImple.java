@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,9 +31,6 @@ import com.co.kr.mapper.UploadMapper;
 import com.co.kr.util.CommonUtils;
 import com.co.kr.vo.FileListVO;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Service
 @Transactional
 public class UploadServiceImple implements UploadService {
@@ -42,6 +40,11 @@ public class UploadServiceImple implements UploadService {
 	@Override
 	public List<BoardListDomain> boardList() {
 		return uploadMapper.boardList();
+	}
+	
+	@Override
+	public List<BoardListDomain> boardAllList(Map<String, Integer>map) {
+		return uploadMapper.boardAllList(map);
 	}
 
 	@Override
@@ -171,5 +174,10 @@ public class UploadServiceImple implements UploadService {
 	@Override
 	public List<BoardFileDomain> boardSelectOneFile(HashMap<String, Object> map) {
 		return uploadMapper.boardSelectOneFile(map);
+	}
+	
+	@Override
+	public Integer boardCount() {
+		return uploadMapper.boardCount();
 	}
 }

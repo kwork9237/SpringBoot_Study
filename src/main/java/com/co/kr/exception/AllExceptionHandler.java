@@ -12,11 +12,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.co.kr.util.CommonUtils;
 
-import lombok.extern.slf4j.Slf4j;
-
-
-//Class 부분부터 작성
-@Slf4j
 @ControllerAdvice
 public class AllExceptionHandler {
 	//Request Error

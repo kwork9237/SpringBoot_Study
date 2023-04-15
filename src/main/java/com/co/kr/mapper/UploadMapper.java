@@ -2,6 +2,7 @@ package com.co.kr.mapper;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -24,4 +25,8 @@ public interface UploadMapper {
 	
 	public BoardListDomain boardSelectOne(HashMap<String, Object> map);
 	public List<BoardFileDomain> boardSelectOneFile(HashMap<String, Object> map);
+
+	//added
+	public List<BoardListDomain> boardAllList(Map<String, Integer>map);
+	public Integer boardCount();
 }
