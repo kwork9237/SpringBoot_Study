@@ -41,7 +41,9 @@ public class UserController {
 	private UploadService uploadService;
 	
 	@RequestMapping(value = "board")
-	public ModelAndView login(LoginVO loginDTO, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public ModelAndView login(LoginVO loginDTO, 
+			HttpServletRequest request, HttpServletResponse response,
+			RedirectAttributes ra) throws IOException {
 		//session 처리
 		HttpSession session = request.getSession();
 		ModelAndView mav = new ModelAndView();
@@ -89,12 +91,16 @@ public class UserController {
 		//seq data
 		session.setAttribute("mbSeq", loginDomain.getMbSeq());
 		
-		List<BoardListDomain> items = uploadService.boardList();
+		//List<BoardListDomain> items = uploadService.boardList();
 		//System.out.println("items ==> " + items);
 		
-		mav.addObject("items", items);
-		//mav.addObject("items", bdListCall(request));
-		mav.setViewName("board/boardList.html");
+		//mav.addObject("items", items);
+		//mav.setViewName("board/boardList.html");
+		
+		mav.addObject("items", bdListCall(request));
+		
+		ra.addAttribute("page", "1");
+		mav.setViewName("redirect:/bdList");
 		
 		return mav;
 	};
@@ -127,7 +133,8 @@ public class UserController {
 	
 	//Logout
 	@RequestMapping(value = "logout")
-	public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public ModelAndView logout(HttpServletRequest request, HttpServletResponse response,
+			RedirectAttributes ra) throws IOException {
 		ModelAndView mav = new ModelAndView();
 		
 		//세션 전부 제거
@@ -148,12 +155,15 @@ public class UserController {
 		}
 		
 		//로그인 페이지로 이동시킨다.
-		mav.setViewName("/index.html"); 
+		//mav.setViewName("/index.html");
+		mav.setViewName("redirect:/");
 		
 		return mav;
 	}
 	
 	//Member Create
+	
+	//Create Member
 	@RequestMapping(value = "create")
 	public ModelAndView mbCreate(SigninVO signinDTO, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		ModelAndView mav = new ModelAndView();
@@ -200,6 +210,8 @@ public class UserController {
 	}
 	
 	//AdminList
+	
+	//Member List
 	@RequestMapping(value = "mbList")
 	public ModelAndView mbList(HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
@@ -211,6 +223,8 @@ public class UserController {
 	}
 	
 	//Get Modify Page
+	
+	//member status get
 	@GetMapping("modify/{mbSeq}")
 	public ModelAndView modify(@PathVariable("mbSeq") String mbSeq, 
 			HttpServletRequest request, HttpServletResponse response,
@@ -241,6 +255,8 @@ public class UserController {
 		return mav;
 	}
 	
+	//Edit List
+	
 	@GetMapping("mbEditList")
 	public ModelAndView mbEditList(@RequestParam("mbSeq") String mbSeq, HttpServletRequest req) {
 		ModelAndView mav = new ModelAndView();
@@ -258,6 +274,8 @@ public class UserController {
 	}
 	
 	//Member Update
+	
+	//Member Update
 	@RequestMapping("/update")
 	public ModelAndView update(LoginVO log, 
 			HttpServletRequest req, RedirectAttributes ra,
@@ -266,9 +284,7 @@ public class UserController {
 		ModelAndView mav = new ModelAndView();		
 		HttpSession session = req.getSession();
 		String IP = CommonUtils.getClientIP(req);
-		
-		//getLevel이 null이 되는 현상
-		System.out.println(log.getLevel());
+	
 		LoginDomain member = LoginDomain.builder()
 				.mbSeq(Integer.parseInt(log.getSeq()))
 				.mbId(log.getId())
@@ -390,6 +406,8 @@ public class UserController {
 	}
 	
 	//멤버 리스트 (admin/list.html)에 데이터 input하기 위함
+	
+	//List Call
 	public ModelAndView mbListCall(HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
 		
