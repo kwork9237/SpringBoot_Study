@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.co.kr.domain.BoardListDomain;
 import com.co.kr.domain.LoginDomain;
@@ -100,14 +101,15 @@ public class UserController {
 	
 	//좌측 메뉴 클릭시 보드화면 이동 (로그인된 상태)
 	@RequestMapping(value = "bdList")
-	//public ModelAndView bdList() {
 	public ModelAndView bdList(HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
 		List<BoardListDomain> items = uploadService.boardList();
 		//System.out.println("items ==> " + items);
 		
-		mav.addObject("items", items); //mav.addObject("items", bdListCall(request));
+		mav.addObject("items", items);
+		mav = bdListCall(request);
 		
+		System.out.println(mav);
 		mav.setViewName("board/boardList.html");
 		
 		return mav;
@@ -146,7 +148,7 @@ public class UserController {
 		}
 		
 		//로그인 페이지로 이동시킨다.
-		mav.setViewName("/index.html");
+		mav.setViewName("/index.html"); 
 		
 		return mav;
 	}
@@ -163,9 +165,6 @@ public class UserController {
 		map.put("mbId", signinDTO.getId());
 		map.put("mbPw", signinDTO.getPw());
 		map.put("mbIp", IP);
-		
-		//의문 : mbLevel과 mbUse 지정이 안되서 들어가는것.
-		//해결 : UserMapper에서 수정하면 된다.
 		
 		//멤버 확인
 		int check = userService.mbDuplicationCheck(map);
@@ -191,7 +190,7 @@ public class UserController {
 		//이미 ID가 존재하는 경우, 다른 ID 생성요청, 다시 페이지 보여줌
 		else {
 			String alertText = "이미 존재하는 아이디입니다. 다른 아이디를 생성해 주세요.";
-			String redirectPath = "/main/signin";
+			String redirectPath = "/main";
 			
 			CommonUtils.redirect(alertText, redirectPath, response);
 			
@@ -213,43 +212,75 @@ public class UserController {
 	
 	//Get Modify Page
 	@GetMapping("modify/{mbSeq}")
-	public ModelAndView modify(@PathVariable String mbSeq, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public ModelAndView modify(@PathVariable("mbSeq") String mbSeq, 
+			HttpServletRequest request, HttpServletResponse response,
+			RedirectAttributes ra) throws IOException {
 		//참고
 		//GetMapping 값 read -> https://galid1.tistory.com/556
 		//PathVariable와 {} 이름은 같아야 한다.
 		ModelAndView mav = new ModelAndView();
+		ra.addAttribute("mbSeq", mbSeq);
+		
 		
 		HttpSession session = request.getSession();
 		Integer SessSeq = (Integer) session.getAttribute("mbSeq");
 		
+		//redirect 방식 사용할 경우 오류나서 리다이렉트 안함
 		//String로 할 경우 안 되서 Integer로 캐스팅
+		/*
 		if(Integer.parseInt(mbSeq) != SessSeq) {
 			String alertText = "타인의 계정은 수정할 수 없습니다!";
 			String redirectPath = "/main";
 			
-			//System.out.println("mbSeq : " + mbSeq );
-			//System.out.println("SessionData : " + session.getAttribute("mbSeq").toString());
-			
 			CommonUtils.redirect(alertText, redirectPath, response);
 		}
+		*/
 
-		mav = toAdminListRedirect(mbSeq, request);
+		mav.setViewName("redirect:/mbEditList");
+		
+		return mav;
+	}
+	
+	@GetMapping("mbEditList")
+	public ModelAndView mbEditList(@RequestParam("mbSeq") String mbSeq, HttpServletRequest req) {
+		ModelAndView mav = new ModelAndView();
+		
+		mav = mbListCall(req);
+		
+		Map map = new HashMap<String, String>();
+		map.put("mbSeq", mbSeq);
+		
+		LoginDomain loginDomain = userService.mbSelectList(map);
+		mav.addObject("item", loginDomain);
+		mav.setViewName("admin/adminEditList.html");
 		
 		return mav;
 	}
 	
 	//Member Update
-	@RequestMapping(value = {"/modify/update"})
-	public ModelAndView update(@RequestParam("pw") String password, @RequestParam("seq") String mbSeq,
-			HttpServletRequest request, HttpServletResponse response) throws IOException {
+	@RequestMapping("/update")
+	public ModelAndView update(LoginVO log, 
+			HttpServletRequest req, RedirectAttributes ra,
+			HttpServletResponse response) throws IOException {
 		
-		ModelAndView mav = new ModelAndView();
+		ModelAndView mav = new ModelAndView();		
+		HttpSession session = req.getSession();
+		String IP = CommonUtils.getClientIP(req);
 		
-		//조회할 mbseq 입력, 선택 및 업데이트
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("mbSeq", mbSeq);
-		LoginDomain member = userService.mbSelectList(map);
-		
+		//getLevel이 null이 되는 현상
+		System.out.println(log.getLevel());
+		LoginDomain member = LoginDomain.builder()
+				.mbSeq(Integer.parseInt(log.getSeq()))
+				.mbId(log.getId())
+				.mbPw(log.getPw())
+				.mbLevel(log.getLevel())
+				.mbIp(IP)
+				.mbUse("Y")
+				.build();
+		userService.mbUpdate(member);
+
+		/*
+		//redirect 사용시 오류남.
 		//마스터 계정 업데이트 방지
 		if(Integer.parseInt(mbSeq) == 0) {
 			String alertText = "마스터 계정은 변경할 수 없습니다.";
@@ -258,7 +289,7 @@ public class UserController {
 			CommonUtils.redirect(alertText, redirectPath, response);
 			
 			//마스터 계정 코드로 리다이렉트
-			mav = toAdminListRedirect(mbSeq, request);
+			mav = mbListCall(request);
 			return mav;
 		}
 		
@@ -270,7 +301,7 @@ public class UserController {
 			CommonUtils.redirect(alertText, redirectPath, response);
 			
 			//마스터 계정 코드로 리다이렉트
-			mav = toAdminListRedirect(mbSeq, request);
+			mav = mbListCall(request);
 			return mav;
 		}
 		
@@ -283,20 +314,28 @@ public class UserController {
 		String redirectPath = "/main";
 		
 		CommonUtils.redirect(alertText, redirectPath, response);
+		*/
 		
-		mav = toAdminListRedirect(mbSeq, request);
+		ra.addAttribute("page", "1");
+		mav.setViewName("redirect:/mbList");
+		
 		return mav;
 	}
 	
 	//Member Remove
 	@RequestMapping(value = {"/remove/{mbSeq}"})
 	public ModelAndView remove(@PathVariable String mbSeq,
-			HttpServletRequest request, HttpServletResponse response) throws IOException {
+			HttpServletRequest request, HttpServletResponse response,
+			RedirectAttributes re) throws IOException {
 		
 		ModelAndView mav = new ModelAndView();
+		HttpSession session = request.getSession();
 		
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("mbSeq", mbSeq);
+		
+		/*
+		//redirect 오류
 		LoginDomain member = userService.mbSelectList(map);
 		
 		//마스터 계정 삭제 방지
@@ -307,11 +346,10 @@ public class UserController {
 			CommonUtils.redirect(alertText, redirectPath, response);
 			
 			//마스터 계정 코드로 리다이렉트
-			mav = toAdminListRedirect(mbSeq, request);
+			mav = mbListCall(request);
 			return mav;
 		}
 		
-		HttpSession session = request.getSession();
 		Integer SessSeq = (Integer) session.getAttribute("mbSeq");
 		
 		//String로 할 경우 안 되서 Integer로 캐스팅 (삭제방지)
@@ -321,31 +359,33 @@ public class UserController {
 			
 			CommonUtils.redirect(alertText, redirectPath, response);
 			
-			mav = toAdminListRedirect(mbSeq, request);
+			mav = mbListCall(request);
 			return mav;
 		}
 		
 		//멤버가 null일 경우 예외처리
 		if( member == null ) {
 			String alertText = "사용자를 찾을 수 없습니다.";
-			String redirectPath = "/main/";
+			String redirectPath = "/main";
 			
 			CommonUtils.redirect(alertText, redirectPath, response);
 			
 			//마스터 계정 코드로 리다이렉트
-			mav = toAdminListRedirect(mbSeq, request);
+			mav = mbListCall(request);
 			return mav;
 		}
-		
-		userService.mbRemove(map);
 		
 		//Remove 성공 메시지
 		String alertText = "아이디 : " + member.getMbId() + "가 정상적으로 삭제되었습니다.";
 		String redirectPath = "/main";
 				
 		CommonUtils.redirect(alertText, redirectPath, response);
+		*/
 		
-		mav = toAdminListRedirect(mbSeq, request);
+		userService.mbRemove(map);
+		
+		re.addAttribute("page", session.getAttribute("page"));
+		mav.setViewName("redirect:/mbList");
 		return mav;
 	}
 	
@@ -361,28 +401,28 @@ public class UserController {
 		if(memberCount > 0) {
 			isNotEmpty = true;
 			mav.addObject("isNotEmpty", isNotEmpty);
+			
+			//페이지네이션 지정
+			Map<String, Object> pegmap;
+			pegmap = Pagination.pagination(memberCount, request);
+			mav.addAllObjects(pegmap);
+			
+			//Member Data Get
+			Map<String, Integer> map = new HashMap<>();
+			Integer content = 10;	//조회 개수 지정
+			
+			//페이지네이션 조회시작지점을 강제로 형변환 해서 가져옴
+			map.put("offset", (int)pegmap.get("offset"));
+			map.put("contentnum", content);
+			
+			List<LoginDomain> mbList = userService.mbAllList(map);
+			mav.addObject("items", mbList);
 		}
 				
 		else {
 			isNotEmpty = false;
 			mav.addObject("isNotEmpty", isNotEmpty);
 		}
-		
-		//페이지네이션 지정
-		Map<String, Object> pegmap;
-		pegmap = Pagination.pagination(memberCount, request);
-		mav.addAllObjects(pegmap);
-		
-		//Member Data Get
-		Map<String, Integer> map = new HashMap<>();
-		Integer content = 10;	//조회 개수 지정
-		
-		//페이지네이션 조회시작지점을 강제로 형변환 해서 가져옴
-		map.put("offset", (int)pegmap.get("offset"));
-		map.put("contentnum", content);
-		
-		List<LoginDomain> mbList = userService.mbAllList(map);
-		mav.addObject("items", mbList);
 		
 		return mav;
 	}
@@ -392,63 +432,22 @@ public class UserController {
 		
 		//게시글 개수 총합
 		Integer boardCount = uploadService.boardCount();
-		Boolean isNotEmpty;
-		
-		//멤버 목록의 크기를 구하고, 0 이상이면 비어있지 않음 반환
-		if(boardCount > 0) {
-			isNotEmpty = true;
-			mav.addObject("isNotEmpty", isNotEmpty);
-		}
-				
-		else {
-			isNotEmpty = false;
-			mav.addObject("isNotEmpty", isNotEmpty);
-		}
-		
+
 		//페이지네이션 지정
 		Map<String, Object> pegmap;
 		pegmap = Pagination.pagination(boardCount, request);
 		mav.addAllObjects(pegmap);
-		
+			
 		//Member Data Get
 		Map<String, Integer> map = new HashMap<>();
 		Integer content = 10;	//조회 개수 지정
-			
+				
 		//페이지네이션 조회시작지점을 강제로 형변환 해서 가져옴
 		map.put("offset", (int)pegmap.get("offset"));
 		map.put("contentnum", content);
-		
+			
 		List<BoardListDomain> bdList = uploadService.boardAllList(map);
 		mav.addObject("items", bdList);
-		
-		System.out.println(mav);
-		
-		return mav;
-	}
-	
-	//멤버 리스트 조회
-	public ModelAndView toAdminListRedirect(String mbSeq, HttpServletRequest request) {
-		ModelAndView mav = new ModelAndView();
-		HashMap<String, String> hmap = new HashMap<String, String>();
-		hmap.put("mbSeq", mbSeq);
-
-		LoginDomain member = userService.mbSelectList(hmap);
-		
-		mav = mbListCall(request);
-		mav.addObject("item", member);
-
-		//수정, 선택시
-		if(member != null)
-			mav.setViewName("admin/adminEditList.html");
-		
-		//삭제시
-		else {
-			hmap.remove("mbSeq");
-			hmap.put("mbSeq", "0");
-			
-			member = userService.mbSelectList(hmap);
-			mav.setViewName("admin/adminList.html");
-		}
 		
 		return mav;
 	}

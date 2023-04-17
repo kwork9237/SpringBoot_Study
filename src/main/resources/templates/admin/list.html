@@ -23,7 +23,7 @@
 	        </tr>
         </thead>
         <tbody>
-            <tr th:if=${itemsIsEmpty} th:each="item : ${items}">
+            <tr th:if=${isNotEmpty} th:each="item : ${items}">
 <!--                 <td th:text="${item.mbSeq}"></td> -->
                 <td th:text="${item.mbId}"></td>
                 <td th:text="${item.mbPw}"></td>

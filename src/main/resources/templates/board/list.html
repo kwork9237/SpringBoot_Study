@@ -25,7 +25,7 @@
 	                <td th:text="${item.bdCreateAt}"></td>
 	                <td th:text="${item.bdUpdateAt}"></td>
 	            </tr>
-            </th:block>    
+           </th:block>    
                
         </tbody>
     </table>
@@ -74,4 +74,59 @@
 	        <a  th:href="@{bdList}"><button style="background-color: #00a2be; color: white; margin-left: 20px">목록으로</button></a>
         </div>
     </th:block>
+    <div class="pagination">
+        <ul>
+            <th:block th:switch="${startpage} <= ${endpage}">
+                <li th:case="${rowNUM} < 0" style="display: none;">
+                    <a class="icon first" th:href="@{bdList(page=${1})}">&laquo;</a>
+                </li>
+                <li th:case="${rowNUM} > ${startpage}" style="display: inline-block">
+                    <a class="icon first" th:href="@{bdList(page=${startpage})}">&laquo;</a>
+                </li>
+                <li th:case="${startpage} < 10" style="display: none;">
+                    <a class="icon first" th:href="@{bdList(page=${startpage}-10)}">&laquo;</a>
+                </li>
+                <li th:case="${startpage} > 10" style="display: inline-block;">
+                    <a class="icon first" th:href="@{bdList(page=${1})}">&laquo;</a>
+                </li>
+            </th:block>
+
+            <th:block th:switch="${rowNUM} >= 1">
+                <li th:case="(${rowNUM}-1) == 0" style="display: none">
+                    <a class="icon first" th:href="@{bdList(page=${1})}">&laquo;</a>
+                </li>
+                <li th:case="(${rowNUM}-1) > 0" style="display: inline-block">
+                    <!-- <a class="icon first" th:href="@{bdList(page=${rowNUM}-1)}"></a> -->
+                    <!--  -->
+                    <a class="icon prev" th:href="@{bdList(page=${rowNUM}-1)}"></a>
+                </li>
+            </th:block>
+            
+            <!-- for 문 -->
+            <li th:each="i : ${#numbers.sequence(startpage, endpage)}" style="display: inline-block">
+                <div class="on" th:if="${i}==${rowNUM}" th:text="${i}"></div>
+                <div th:unless="${i}==${rowNUM}">
+                    <a class="on" th:href="@{bdList(page=${i})}" th:text="${i}"></a>
+                </div>
+            </li>
+            
+            <!-- for 문 -->
+            <th:block th:switch="${rowNUM} <= ${endpage}">
+                <li th:case="${rowNUM} < ${endpage}" style="display: inline-block">
+                <!-- 잘못된 아이콘 지정 -->
+                <!-- <a class="icon last" th:href="@{bdList(page=${rowNUM}+1)}"></a> -->
+                    <a class="icon next" th:href="@{bdList(page=${rowNUM}+1)}"></a>
+                </li>
+                <li th:case="${rowNUM} == ${endpage}" style="display: none">
+                    <a class="icon last" th:href="@{bdList(page=${endpage})}"></a>
+                </li>
+            </th:block>
+
+            <th:block th:switch="${rowNUM} < ${endpage}">
+                <li th:case="${rowNUM} < ${endpage}" style="display: inline-block">
+                <a class="icon last" th:href="@{bdList(page=${startpage}+10)}"></a>
+                </li>
+            </th:block>
+        </ul>
+    </div>
 </div>
