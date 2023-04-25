@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum Table {
 	MEMBER("member"),
 	FILES("files"),
-	BOARD("board");
+	BOARD("board"),
+	INFO("info");
 	
 	private String table;
 	

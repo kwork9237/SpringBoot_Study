@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.co.kr.domain.BoardListDomain;
 import com.co.kr.domain.LoginDomain;
+import com.co.kr.service.InfoService;
 import com.co.kr.service.UploadService;
 import com.co.kr.service.UserService;
 import com.co.kr.util.CommonUtils;
@@ -39,6 +40,9 @@ public class UserController {
 	
 	@Autowired
 	private UploadService uploadService;
+	
+	@Autowired
+	private InfoService infoService;
 	
 	@RequestMapping(value = "board")
 	public ModelAndView login(LoginVO loginDTO, 
@@ -115,7 +119,7 @@ public class UserController {
 		mav.addObject("items", items);
 		mav = bdListCall(request);
 		
-		System.out.println(mav);
+		//System.out.println(mav);
 		mav.setViewName("board/boardList.html");
 		
 		return mav;
@@ -161,8 +165,6 @@ public class UserController {
 		return mav;
 	}
 	
-	//Member Create
-	
 	//Create Member
 	@RequestMapping(value = "create")
 	public ModelAndView mbCreate(SigninVO signinDTO, HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -187,6 +189,9 @@ public class UserController {
 		if(check == 0) {
 			//멤버 생성
 			userService.mbCreate(map);
+			
+			//[추가] 유저정보 기본값
+			infoService.infoCreate(map);
 			
 			String alertText = "아이디가 성공적으로 생성되었습니다. 로그인해 주세요.";
 			String redirectPath = "/main";
