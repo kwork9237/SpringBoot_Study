@@ -8,23 +8,35 @@
 				<col style="width:80%"/>
 			</colgroup>
 			<tbody>
+			<!-- 
 				<tr>
 					<th>프로필 사진</th>
 					<td>
-						
+						<ul th:if="${files}"  th:each="file : ${files}" style="display: inline-block;margin-bottom: 5px;">
+                			<li> <img id="imgId" th:src="@{${file.upNewFileName}}" alt="첨부이미지" width="65" height="65" /></li>
+            			</ul>
 					</td>
 				</tr>
+				 -->
 				<tr>
 					<th>아이디</th>
-					<td>
-						<input type="text" name="id" placeholder="id" th:value=${item.mbId} th:readonly="true"/>
-					</td>
+					<td><input type="text" name="id" placeholder="id" th:value=${item.mbId} th:readonly="true"/></td>
+				</tr>
+				<tr>
+					<th>이름</th>
+					<td><input type="text" name="name" placeholder="name" th:value=${item.myName} th:readonly="true"/></td>
+				</tr>
+				<tr>
+					<th>주소</th>
+					<td><input type="text" name="addr" placeholder="addr" th:value=${item.myAddr} th:readonly="true"/></td>
+				</tr>
+				<tr>
+					<th>우편번호</th>
+					<td><input type="text" name="zipcode" placeholder="zipcode" th:value=${item.myZipCode} th:readonly="true"/></td>
 				</tr>
 			</tbody>
 		</table>
-		
-		<button type="button">
-	        <a th:href="@{edit}" style="color: #fff">수정</a>
-    	</button>
+       
+       <a th:href="@{/edit/{mbSeq}(mbSeq = ${item.mbSeq})}"><button style="margin-right: 11px">수정</button></a>
 	</div>
 </form>

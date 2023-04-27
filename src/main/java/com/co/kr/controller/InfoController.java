@@ -41,6 +41,10 @@ public class InfoController {
 		System.out.println(id);
 		
 		mav.addObject("item", id);
+		mav.addObject("item", session.getAttribute("mbSeq"));
+		
+		System.out.println(mav);
+		
 		mav.setViewName("information/infoList.html");
 		
 		return mav;

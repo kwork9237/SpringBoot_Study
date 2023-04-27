@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 @Builder(builderMethodName="builder")
 public class InfoDomain {
+	private Integer mbSeq;
 	private String mbId;
-
 	
 	//userinfo
 	private String myName;
