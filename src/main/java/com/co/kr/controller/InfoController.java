@@ -10,7 +10,9 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -67,12 +69,14 @@ public class InfoController {
 		return mav;
 	}
 	
-	@RequestMapping(value = {"/submit"})
-	public ModelAndView infoEdit(InfoVO infoVO,
+	@RequestMapping("/submit")
+	public ModelAndView infoEdit(@ModelAttribute InfoVO infoVO,
 			HttpServletRequest req, HttpServletResponse res,
 			RedirectAttributes re) throws IOException {
 		ModelAndView mav = new ModelAndView();
 		HttpSession session = req.getSession();
+		
+		System.out.println("SUBMIT" + infoVO.getMbAddr());
 		
 		//System.out.println(res.);
 		//Map<String, String> map = new HashMap<String, String>();
