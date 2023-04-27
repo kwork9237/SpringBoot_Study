@@ -15,9 +15,9 @@ public class UserServiceImpl implements UserService{
 	private UserMapper userMapper;
 	
 	@Override
-	//public void mbCreate(LoginDomain loginDomain) {
-	public void mbCreate(Map<String, String>map) {
-		userMapper.mbCreate(map);
+	public void mbCreate(LoginDomain loginDomain) {
+	//public void mbCreate(Map<String, String>map) {
+		userMapper.mbCreate(loginDomain);
 	}
 	
 	@Override

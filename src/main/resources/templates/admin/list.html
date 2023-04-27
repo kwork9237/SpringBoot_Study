@@ -23,7 +23,7 @@
 	        </tr>
         </thead>
         <tbody>
-            <tr th:if=${isNotEmpty} th:each="item : ${items}">
+            <tr th:if=${itemsNotEmpty} th:each="item : ${items}">
 <!--                 <td th:text="${item.mbSeq}"></td> -->
                 <td th:text="${item.mbId}"></td>
                 <td th:text="${item.mbPw}"></td>
@@ -54,7 +54,7 @@
 <!--					</th:block> -->
                 </td>
             </tr>
-            <tr th:unless=${isNotEmpty}>
+            <tr th:unless=${itemsNotEmpty}>
                 <td colspan="8" style="padding: 60px 0"> 데이터가 없습니다 </td>
             </tr>
         </tbody>
