@@ -30,7 +30,9 @@
 
 	<!-- SELECT (Read) -->
 	<select id="infoSelect" resultType="com.co.kr.domain.InfoDomain" parameterType="hashMap">
-		SELECT * FROM jsp.information WHERE mb_seq=#{mbSeq}
+		<!-- SELECT * FROM jsp.information WHERE mb_seq=#{mbSeq} -->
+		SELECT mb_seq, mb_id, mb_name, mb_addr, mb_email, mb_zipcode
+		FROM jsp.information WHERE mb_seq=#{mbSeq}
 	</select>
 	
 	<!-- Update -->

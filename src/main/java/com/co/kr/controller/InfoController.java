@@ -11,7 +11,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -40,9 +39,6 @@ public class InfoController {
 		
 		InfoDomain info = infoService.infoSelect(map);
 		
-		if(info == null)
-			System.out.println("data is null");
-		
 		mav.addObject("item", info);
 		mav.setViewName("information/infoList.html");
 		return mav;
@@ -64,34 +60,46 @@ public class InfoController {
 		if(info == null)
 			System.out.println("data is null");
 		
-		mav.addObject("item", info);		
-		mav.setViewName("/information/infoEditList.html");
+		mav.addObject("item", info);
+		mav.setViewName("information/infoEditList.html");
 		return mav;
 	}
 	
-	@RequestMapping("/submit")
+	@PostMapping("/submit")
 	public ModelAndView infoEdit(@ModelAttribute InfoVO infoVO,
 			HttpServletRequest req, HttpServletResponse res,
 			RedirectAttributes re) throws IOException {
 		ModelAndView mav = new ModelAndView();
 		HttpSession session = req.getSession();
 		
-		System.out.println("SUBMIT" + infoVO.getMbAddr());
-		
 		//System.out.println(res.);
 		//Map<String, String> map = new HashMap<String, String>();
 		//map.put("mbSeq", mbSeq);
 		
+		/*
+		 .mbSeq((Integer)session.getAttribute("mbSeq"))
+		 .mbId(session.getAttribute("id").toString()) 
+		 
+		*/
+		
 		InfoDomain info = InfoDomain.builder()
-				.mbSeq((Integer)session.getAttribute("mbSeq"))
-				.mbId(session.getAttribute("id").toString())
+				.mbSeq(Integer.parseInt(infoVO.getMbSeq()))
+				.mbId(infoVO.getMbId())
 				.mbName(infoVO.getMbName())
 				.mbAddr(infoVO.getMbAddr())
 				.mbEmail(infoVO.getMbEmail())
 				.mbZipCode(infoVO.getMbZipCode())
 				.build();
-				
+		/*
+		System.out.println("seq : " + info.getMbSeq());
+		System.out.println("id : " + info.getMbId());
+		System.out.println("name : " + info.getMbName());
+		System.out.println("addr : " + info.getMbAddr());
+		System.out.println("email : " + info.getMbEmail());
+		System.out.println("zip : " + info.getMbZipCode());
+		*/
 		infoService.infoUpdate(info);
+	
 		
 		//re.addAttribute("page", session.getAttribute(mbSeq));
 		mav.setViewName("redirect:/myPage");
