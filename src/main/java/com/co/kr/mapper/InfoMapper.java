@@ -5,6 +5,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.co.kr.domain.InfoDomain;
+import com.co.kr.domain.ProfileImgDomain;
 
 @Mapper
 public interface InfoMapper {
@@ -15,6 +16,5 @@ public interface InfoMapper {
 	public void infoRemove(Map<String, String> map);
 	
 	//프로필 이미지
-	public void profileImgUpload(InfoDomain infoDomain);
-	public void profileImgUpdate(InfoDomain infoDomain);
+	public void profileImgUpload(ProfileImgDomain profileImgDomain);
 }

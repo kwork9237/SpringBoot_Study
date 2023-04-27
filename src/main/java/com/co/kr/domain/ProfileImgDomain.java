@@ -5,12 +5,10 @@ import lombok.Data;
 
 @Data
 @Builder(builderMethodName="builder")
-public class InfoDomain {
+public class ProfileImgDomain {
 	private String mbId;
-
 	
-	//userinfo
-	private String myName;
-	private String myAddr;
-	private String myZipCode;
+	//profile image
+	private String fileName;
+	private String filePath;
 }

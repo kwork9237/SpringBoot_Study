@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class InfoVO {
+	private String profile;
 	private String id;
 	
 	private String name;
