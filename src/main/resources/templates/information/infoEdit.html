@@ -1,25 +1,83 @@
-<div class="title" style="color: #FF00FF">내 정보</div>
+<div class="title" style="color: #FF00FF">내 정보 수정</div>
 
-<form role="form" action="create" method="post" enctype="multipart/form-data">
+<!-- <form role="form" action="update" method="post" enctype="multipart/form-data"> -->
+<form role="form" action="submit" method="post">
 	<div class="section form">
 		<table>
 			<colgroup>
 				<col style="width:20%"/>
 				<col style="width:80%"/>
 			</colgroup>
-			<tbody>
-				<tr>
-					<th>프로필 사진</th>
-					<td>
-					</td>
-				</tr>
-				<tr>
-					<th>아이디</th>
-					<td>
-						<input type="text" name="id" placeholder="id" th:value=${item.mbId} th:readonly="true"/>
-					</td>
-				</tr>
-			</tbody>
+				
+			<!-- 아이템이 있을 경우 실행 -->
+			<th:block th:if!="${items}">
+				<tbody>
+					<tr>
+						<th>프로필 사진</th>
+						<td>
+							<!-- 
+							<ul th:if="${files}"  th:each="file : ${files}" style="display: inline-block;margin-bottom: 5px;">
+	                			<li> <img id="imgId" th:src="@{${file.upNewFileName}}" alt="첨부이미지" width="65" height="65" /></li>
+	            			</ul>
+	            			-->
+						</td>
+					</tr>
+					<tr>
+						<th>아이디</th>
+						<td><input type="text" name="id" placeholder="id" th:value=${item.mbId} th:readonly="true" required/></td>
+					</tr>
+					<tr>
+						<th>이름</th>
+						<td><input type="text" name="name" placeholder="name" th:value=${item.mbName}/></td>
+					</tr>
+					<tr>
+						<th>주소</th>
+						<td><input type="text" name="addr" placeholder="addr" th:value=${item.mbAddr}/></td>
+					</tr>
+					<tr>
+						<th>이메일</th>
+						<td><input type="text" name="email" placeholder="email" th:value=${item.mbEmail}/></td>
+					</tr>
+					<tr>
+						<th>우편번호</th>
+						<td><input type="text" name="zipcode" placeholder="zipcode" th:value=${item.mbZipCode}/></td>
+					</tr>
+				</tbody>
+			</th:block>
 		</table>
 	</div>
+	
+	<div class="section form" style="margin:0;">
+	<div style="padding: 5px 0; text-align: right;">
+		<!-- <a th:href="@{/infoEdit(mbSeq = ${item.mbSeq})}" class="button"> -->
+		<!-- <a th:href="@{/info/{mbSeq}(mbSeq = ${item.mbSeq})}" class="button"> -->
+
+		<a th:href="@{/submit/{mbSeq}(mbSeq = ${item.mbSeq})}" class="button">
+			<button>적용</button>
+		</a>
+
+		<a th:href="@{myPage}" class="button">
+			<button style="margin-left: 20px">돌아가기</button>
+		</a>
+	</div>
+</div>
 </form>
+<!-- 정보 수정 -->
+<!-- 
+<div class="section form" style="margin:0;">
+	<div style="padding: 5px 0; text-align: right;">
+
+		<a th:href="@{/submit/{mbSeq}(mbSeq = ${item.mbSeq})}" class="button">
+			<button>적용</button>
+		</a>
+
+		<a th:href="@{myPage}" class="button">
+			<button style="margin-left: 20px">돌아가기</button>
+		</a>
+	</div>
+</div>
+ -->
+
+
+<!-- <a th:href="@{/infoEdit(mbSeq = ${item.mbSeq})}" class="button"> -->
+		<!-- <a th:href="@{/info/{mbSeq}(mbSeq = ${item.mbSeq})}" class="button"> -->

@@ -20,14 +20,17 @@ public class InfoServiceImpl implements InfoService{
 	private InfoMapper infoMapper;
 
 	@Override
+	public void infoCreate(Map<String, String> map) {
+		infoMapper.infoCreate(map);
+	}
+	/*
 	public void infoCreate(InfoDomain infoDomain) {
 		infoMapper.infoCreate(infoDomain);
 	}
+	*/
 
 	@Override
-	public InfoDomain infoSelect(Map<String, String> map) {
-		System.out.println("INFOSERVICE IMPL : " + map);
-		System.out.println(infoMapper.infoSelect(map));
+	public InfoDomain infoSelect(Map<String, Integer> map) {
 		return infoMapper.infoSelect(map);
 	}
 
@@ -51,7 +54,5 @@ public class InfoServiceImpl implements InfoService{
 		File pathChk = new File(root.toString());
 		
 		if(!pathChk.exists()) pathChk.mkdirs();
-
-		
 	}
 }

@@ -11,10 +11,11 @@ import com.co.kr.domain.ProfileDomain;
 
 public interface InfoService {
 	//정보 생성
-	public void infoCreate(InfoDomain infoDomain);
+	//public void infoCreate(InfoDomain infoDomain);
+	public void infoCreate(Map<String, String> map);
 		
 	//특정 정보 조회
-	public InfoDomain infoSelect(Map<String, String> map);
+	public InfoDomain infoSelect(Map<String, Integer> map);
 		
 	//정보 UPDATE
 	public void infoUpdate(InfoDomain infoDomain);

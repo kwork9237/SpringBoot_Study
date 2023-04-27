@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.co.kr.domain.BoardListDomain;
 import com.co.kr.domain.LoginDomain;
+import com.co.kr.service.InfoService;
 import com.co.kr.service.UploadService;
 import com.co.kr.service.UserService;
 import com.co.kr.util.CommonUtils;
@@ -28,10 +29,7 @@ import com.co.kr.util.Pagination;
 import com.co.kr.vo.LoginVO;
 import com.co.kr.vo.SigninVO;
 
-//import lombok.extern.slf4j.Slf4j;
-
 @Controller
-//@Slf4j
 @RequestMapping(value = "/")
 public class UserController {
 	@Autowired
@@ -40,8 +38,8 @@ public class UserController {
 	@Autowired
 	private UploadService uploadService;
 	
-	//@Autowired
-	//private InfoService infoService;
+	@Autowired
+	private InfoService infoService;
 	
 	@RequestMapping(value = "board")
 	public ModelAndView login(LoginVO loginDTO, 
@@ -80,7 +78,7 @@ public class UserController {
 			return mav;
 		}
 		
-		LoginDomain loginDomain = userService.mbGetId(map);		
+		LoginDomain loginDomain = userService.mbGetId(map);
 		
 		//현재 아이피 추출
 		String IP = CommonUtils.getClientIP(request);
@@ -189,8 +187,8 @@ public class UserController {
 			//멤버 생성
 			userService.mbCreate(map);
 			
-			//[추가] 유저정보 기본값
-			//infoService.infoCreate(map);
+			//[추가] 유저정보 기본값 (create와 동시에 실행된다.)
+			infoService.infoCreate(map);
 			
 			String alertText = "아이디가 성공적으로 생성되었습니다. 로그인해 주세요.";
 			String redirectPath = "/main";
@@ -267,7 +265,7 @@ public class UserController {
 		
 		mav = mbListCall(req);
 		
-		Map map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<String, String>();
 		map.put("mbSeq", mbSeq);
 		
 		LoginDomain loginDomain = userService.mbSelectList(map);
@@ -276,8 +274,6 @@ public class UserController {
 		
 		return mav;
 	}
-	
-	//Member Update
 	
 	//Member Update
 	@RequestMapping("/update")
@@ -403,6 +399,9 @@ public class UserController {
 		*/
 		
 		userService.mbRemove(map);
+		
+		//infoService에서도 제거
+		infoService.infoRemove(map);
 		
 		re.addAttribute("page", session.getAttribute("page"));
 		mav.setViewName("redirect:/mbList");

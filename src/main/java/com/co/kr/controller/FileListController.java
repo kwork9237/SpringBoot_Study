@@ -58,7 +58,6 @@ public class FileListController {
 		
 		map.put("bdSeq", Integer.parseInt(bdSeq));
 		BoardListDomain boardListDomain = uploadService.boardSelectOne(map);
-		//System.out.println("boardListDomain" + boardListDomain);
 		
 		List<BoardFileDomain> fileList = uploadService.boardSelectOneFile(map);
 		
@@ -94,7 +93,7 @@ public class FileListController {
 		ModelAndView mav = new ModelAndView();
 		
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		HttpSession session = request.getSession();
+		//HttpSession session = request.getSession();
 		
 		map.put("bdSeq", Integer.parseInt(bdSeq));
 		BoardListDomain boardListDomain = uploadService.boardSelectOne(map);

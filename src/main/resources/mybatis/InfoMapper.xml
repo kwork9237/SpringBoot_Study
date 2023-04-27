@@ -5,7 +5,8 @@
                         
 <mapper namespace="com.co.kr.mapper.InfoMapper">
 	<!-- CREATE -->
-	<insert id="infoCreate" parameterType="com.co.kr.domain.InfoDomain">
+	<!-- <insert id="infoCreate" parameterType="com.co.kr.domain.InfoDomain"> -->
+	<insert id="infoCreate" parameterType="hashMap">
 		INSERT INTO jsp.information (
 			mb_id,
 			file_name,
@@ -39,7 +40,7 @@
 			mb_name=#{mbName},
 			mb_addr=#{mbAddr},
 			mb_email=#{mbEmail},
-			mb_zipcode=#{mbZipcode}
+			mb_zipcode=#{mbZipCode}
 		WHERE mb_seq=#{mbSeq}
 	</update>
 	
