@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -27,6 +28,7 @@ import com.co.kr.domain.BoardFileDomain;
 import com.co.kr.domain.BoardListDomain;
 import com.co.kr.exception.RequestException;
 import com.co.kr.service.UploadService;
+import com.co.kr.util.Pagination;
 import com.co.kr.vo.FileListVO;
 
 @Controller
@@ -43,6 +45,7 @@ public class FileListController {
 		fileListVO.setTitle("");
 		
 		mav = bdSelectOneCall(fileListVO, String.valueOf(bdSeq), request);
+		mav.addObject(bdListCall(request));
 		mav.setViewName("board/boardList.html");
 		
 		return mav;
@@ -55,7 +58,6 @@ public class FileListController {
 		
 		map.put("bdSeq", Integer.parseInt(bdSeq));
 		BoardListDomain boardListDomain = uploadService.boardSelectOne(map);
-		System.out.println("boardListDomain" + boardListDomain);
 		
 		List<BoardFileDomain> fileList = uploadService.boardSelectOneFile(map);
 		
@@ -73,10 +75,14 @@ public class FileListController {
 	}
 	
 	@GetMapping("detail")
-	public ModelAndView bdDetail(@ModelAttribute("fileListVO") FileListVO fileListVO, @RequestParam("bdSeq") String bdSeq, HttpServletRequest request) throws IOException {
+	public ModelAndView bdDetail(@ModelAttribute("fileListVO") FileListVO fileListVO, 
+			@RequestParam("bdSeq") String bdSeq, 
+			HttpServletRequest request) throws IOException {
 		ModelAndView mav = new ModelAndView();
 		
+		//mav = bdListCall(request);
 		mav = bdSelectOneCall(fileListVO, bdSeq, request);
+		//System.out.println(mav);
 		mav.setViewName("board/boardList.html");
 		
 		return mav;
@@ -101,6 +107,7 @@ public class FileListController {
 		mav.addObject("detail", boardListDomain);
 		mav.addObject("files", fileList);
 		mav.addObject("fileLen", fileList.size());
+		mav.addObject(bdListCall(request));
 		
 		mav.setViewName("board/boardEditList.html");
 		return mav;
@@ -117,6 +124,7 @@ public class FileListController {
 		fileListVO.setContent("");
 		fileListVO.setTitle("");
 		
+		mav.addObject(bdListCall(request));
 		mav.setViewName("board/boardList.html");
 		
 		return mav;
@@ -154,17 +162,39 @@ public class FileListController {
 		}
 		
 		session.removeAttribute("files");
-		mav = bdListCall();
+		mav = bdListCall(request);
 		mav.setViewName("board/boardList.html");
 		
 		return mav;
 	}
 	
-	public ModelAndView bdListCall() {
+	public ModelAndView bdListCall(HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
 		
-		List<BoardListDomain> items = uploadService.boardList();
-		mav.addObject("items", items);
+		//List<BoardListDomain> items = uploadService.boardList();
+		//mav.addObject("items", items);
+		String peg = (String) request.getAttribute("page");
+		if(peg == null)
+			request.setAttribute("page", "1");
+		
+		//게시글 개수 총합
+		Integer boardCount = uploadService.boardCount();
+
+		//페이지네이션 지정
+		Map<String, Object> pegmap;
+		pegmap = Pagination.pagination(boardCount, request);
+		mav.addAllObjects(pegmap);
+					
+		//Member Data Get
+		Map<String, Integer> map = new HashMap<>();
+		Integer content = 10;	//조회 개수 지정
+						
+		//페이지네이션 조회시작지점을 강제로 형변환 해서 가져옴
+		map.put("offset", (int)pegmap.get("offset"));
+		map.put("contentnum", content);
+				
+		List<BoardListDomain> bdList = uploadService.boardAllList(map);
+		mav.addObject("items", bdList);
 		
 		return mav;
 	} 

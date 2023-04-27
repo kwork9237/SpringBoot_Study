@@ -14,7 +14,7 @@ public class Pagination {
 		
 		//페이지넘버 초기화
 		String pnum = request.getParameter("page");
-		System.out.println("pnum : " + pnum);
+		//System.out.println("pnum : " + pnum);
 		
 		if(pnum == null)
 			pnum = "1";
@@ -46,16 +46,7 @@ public class Pagination {
 		map.put("startpage", startpage);
 		map.put("endpage", endpage);
 		map.put("offset", offset);
-		
-		System.out.println("DEBUG -----------------------");
-		System.out.println("StartPage : " + startpage);
-		System.out.println("EndpagePage : " + endpage);
-		System.out.println("PageNum : " + pageNum);
-		System.out.println("Offset : " + offset);
-		System.out.println("RowNum : " + rowNUM);
-		System.out.println("Temp : " + temp);
-		System.out.println("DEBUG -----------------------");
-		
+
 		return map;
 	}
 	

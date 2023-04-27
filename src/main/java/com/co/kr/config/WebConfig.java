@@ -54,5 +54,8 @@ public class WebConfig implements WebMvcConfigurer {
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/resources/upload/**").addResourceLocations("file:///C:/upload/");
+
+		//이미지 프로세싱 테스트
+		//registry.addResourceHandler("/resources/profile/**").addResourceLocations("file:///C:/data/profile");
 	}
 }

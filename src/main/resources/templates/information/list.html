@@ -1,0 +1,49 @@
+<div class="title" style="color: #FF00FF">내 정보</div>
+<div class="section form">
+	<table>
+		<colgroup>
+			<col style="width:20%"/>
+			<col style="width:80%"/>
+		</colgroup>
+			
+		<tbody>
+			<tr>
+				<th>프로필 사진</th>
+				<td>
+					<!-- 
+					<ul th:if="${files}"  th:each="file : ${files}" style="display: inline-block;margin-bottom: 5px;">
+               			<li> <img id="imgId" th:src="@{${file.upNewFileName}}" alt="첨부이미지" width="65" height="65" /></li>
+           			</ul>
+           			-->
+				</td>
+			</tr>
+			<tr>
+				<th>아이디</th>
+				<td><input type="text" name="mbId" th:value=${item.mbId} th:readonly="true"/></td>
+			</tr>
+			<tr>
+				<th>이름</th>
+				<td><input type="text" name="mbName" th:value=${item.mbName} th:readonly="true"/></td>
+			</tr>
+			<tr>
+				<th>주소</th>
+				<td><input type="text" name="mbAddr" th:value=${item.mbAddr} th:readonly="true"/></td>
+			</tr>
+			<tr>
+				<th>이메일</th>
+				<td><input type="text" name="mbEmail" th:value=${item.mbEmail} th:readonly="true"/></td>
+			</tr>
+			<tr>
+				<th>우편번호</th>
+				<td><input type="text" name="mbZipCode" th:value=${item.mbZipCode} th:readonly="true"/></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<!-- 정보 수정 -->
+	<div style="padding: 30px 0; text-align: right;">
+		<a th:href="@{/infoEdit}" class="button">
+			<button>정보 수정</button>
+		</a>
+	</div>
+</div>
