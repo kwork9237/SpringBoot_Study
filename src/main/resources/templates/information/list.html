@@ -1,6 +1,5 @@
 <div class="title" style="color: #FF00FF">내 정보</div>
 
-<form role="form" action="create" method="post" enctype="multipart/form-data">
 	<div class="section form">
 		<table>
 			<colgroup>
@@ -24,19 +23,19 @@
 				</tr>
 				<tr>
 					<th>이름</th>
-					<td><input type="text" name="name" placeholder="name" th:value=${item.myName} th:readonly="true"/></td>
+					<td><input type="text" name="name" placeholder="name" th:value=${item.mbName} th:readonly="true"/></td>
 				</tr>
 				<tr>
 					<th>주소</th>
-					<td><input type="text" name="addr" placeholder="addr" th:value=${item.myAddr} th:readonly="true"/></td>
+					<td><input type="text" name="addr" placeholder="addr" th:value=${item.mbAddr} th:readonly="true"/></td>
 				</tr>
 				<tr>
 					<th>우편번호</th>
-					<td><input type="text" name="zipcode" placeholder="zipcode" th:value=${item.myZipCode} th:readonly="true"/></td>
+					<td><input type="text" name="zipcode" placeholder="zipcode" th:value=${item.mbZipCode} th:readonly="true"/></td>
 				</tr>
 			</tbody>
 		</table>
-       
+       <!-- 
        <a th:href="@{/edit/{mbSeq}(mbSeq = ${item.mbSeq})}"><button style="margin-right: 11px">수정</button></a>
+        -->
 	</div>
-</form>

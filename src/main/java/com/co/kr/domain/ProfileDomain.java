@@ -1,14 +1,15 @@
 package com.co.kr.domain;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Setter
+@Getter
 @Builder(builderMethodName="builder")
-public class ProfileImgDomain {
-	private String mbId;
+public class ProfileDomain {
+	private Integer mbSeq;
 	
-	//profile image
 	private String fileName;
 	private String filePath;
 }

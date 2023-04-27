@@ -21,7 +21,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.co.kr.domain.BoardListDomain;
 import com.co.kr.domain.LoginDomain;
-import com.co.kr.service.InfoService;
 import com.co.kr.service.UploadService;
 import com.co.kr.service.UserService;
 import com.co.kr.util.CommonUtils;
@@ -41,8 +40,8 @@ public class UserController {
 	@Autowired
 	private UploadService uploadService;
 	
-	@Autowired
-	private InfoService infoService;
+	//@Autowired
+	//private InfoService infoService;
 	
 	@RequestMapping(value = "board")
 	public ModelAndView login(LoginVO loginDTO, 
@@ -191,7 +190,7 @@ public class UserController {
 			userService.mbCreate(map);
 			
 			//[추가] 유저정보 기본값
-			infoService.infoCreate(map);
+			//infoService.infoCreate(map);
 			
 			String alertText = "아이디가 성공적으로 생성되었습니다. 로그인해 주세요.";
 			String redirectPath = "/main";
@@ -241,8 +240,8 @@ public class UserController {
 		ra.addAttribute("mbSeq", mbSeq);
 		
 		
-		HttpSession session = request.getSession();
-		Integer SessSeq = (Integer) session.getAttribute("mbSeq");
+		//HttpSession session = request.getSession();
+		//Integer SessSeq = (Integer) session.getAttribute("mbSeq");
 		
 		//redirect 방식 사용할 경우 오류나서 리다이렉트 안함
 		//String로 할 경우 안 되서 Integer로 캐스팅
@@ -287,7 +286,7 @@ public class UserController {
 			HttpServletResponse response) throws IOException {
 		
 		ModelAndView mav = new ModelAndView();		
-		HttpSession session = req.getSession();
+		//HttpSession session = req.getSession();
 		String IP = CommonUtils.getClientIP(req);
 	
 		LoginDomain member = LoginDomain.builder()

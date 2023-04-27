@@ -5,16 +5,22 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.co.kr.domain.InfoDomain;
-import com.co.kr.domain.ProfileImgDomain;
+import com.co.kr.domain.ProfileDomain;
 
 @Mapper
 public interface InfoMapper {
-	//기본 crud 정의
-	public void infoCreate(Map<String, String> map);
-	public InfoDomain infoSelect(Map<String, String>map);
+	//정보 생성
+	public void infoCreate(InfoDomain infoDomain);
+	
+	//특정 정보 조회
+	public InfoDomain infoSelect(Map<String, String> map);
+	
+	//정보 UPDATE
 	public void infoUpdate(InfoDomain infoDomain);
+	
+	//정보 삭제
 	public void infoRemove(Map<String, String> map);
 	
-	//프로필 이미지
-	public void profileImgUpload(ProfileImgDomain profileImgDomain);
+	//프로필 사진 업데이트
+	public void profileImgUpdate(ProfileDomain profileDomain);
 }
