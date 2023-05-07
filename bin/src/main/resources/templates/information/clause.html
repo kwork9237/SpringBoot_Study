@@ -1,0 +1,10 @@
+<div class="userInfo" th:if=${session.id}>
+    <span th:text="${session.id}"></span><span> 님 / </span>
+    <span th:text="${session.mbLevel}"></span><span> 레벨</span>
+    <button type="button">
+        <a th:href="@{logout}" style="color: #fff">로그아웃</a>
+    </button>
+    <br>
+	<span> MAC Addr ( </span>
+	<span th:text=${session.macAddr}></span><span> )</span>
+</div>

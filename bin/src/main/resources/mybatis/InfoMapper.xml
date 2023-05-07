@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+                        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+                        
+<mapper namespace="com.co.kr.mapper.InfoMapper">
+	<!-- CREATE -->
+	<!-- <insert id="infoCreate" parameterType="com.co.kr.domain.InfoDomain"> -->
+	<insert id="infoCreate" parameterType="hashMap">
+		INSERT INTO jsp.information (
+			mb_id,
+			file_name,
+			file_path,
+			mb_name,
+			mb_addr,
+			mb_email,
+			mb_zipcode
+		)
+		
+		VALUES (
+			#{mbId},
+			DEFAULT,
+			DEFAULT,
+			DEFAULT,
+			DEFAULT,
+			DEFAULT,
+			DEFAULT
+		)
+	</insert>
+
+	<!-- SELECT (Read) -->
+	<select id="infoSelect" resultType="com.co.kr.domain.InfoDomain" parameterType="hashMap">
+		<!-- SELECT * FROM jsp.information WHERE mb_seq=#{mbSeq} -->
+		SELECT mb_seq, mb_id, mb_name, mb_addr, mb_email, mb_zipcode
+		FROM jsp.information WHERE mb_seq=#{mbSeq}
+	</select>
+	
+	<!-- Update -->
+	<update id="infoUpdate" parameterType="com.co.kr.domain.InfoDomain">
+		UPDATE jsp.information SET
+			mb_id=#{mbId},
+			mb_name=#{mbName},
+			mb_addr=#{mbAddr},
+			mb_email=#{mbEmail},
+			mb_zipcode=#{mbZipCode}
+		WHERE mb_seq=#{mbSeq}
+	</update>
+	
+	<!-- Remove (Delete) -->
+	<delete id="infoRemove" parameterType="hashMap">
+		DELETE FROM jsp.information WHERE mb_seq=#{mbSeq}
+	</delete>
+	
+	<!-- Profile Image Update -->
+	<update id="profileImgUpdate" parameterType="com.co.kr.domain.ProfileDomain">
+		UPDATE jsp.information SET
+			file_name=#{fileName},
+			file_path=#{filePath}
+		WHERE mb_seq=#{mbSeq}
+	</update>
+</mapper>

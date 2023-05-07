@@ -188,7 +188,9 @@ public class UserController {
 			userService.mbCreate(map);
 			
 			//[추가] 유저정보 기본값 (create와 동시에 실행된다.)
-			infoService.infoCreate(map);
+			Map<String, String> map2 = new HashMap<>();
+			map2.put("mbId", signinDTO.getId());
+			infoService.infoCreate(map2);
 			
 			String alertText = "아이디가 성공적으로 생성되었습니다. 로그인해 주세요.";
 			String redirectPath = "/main";
